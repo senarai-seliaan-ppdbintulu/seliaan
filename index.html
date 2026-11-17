@@ -84,7 +84,7 @@ tbody td.empty{display:block!important;grid-column:1/-1;background:var(--card);b
 <section id="lk" hidden><h2>Aplikasi dikunci</h2><label>Masukkan PIN<input id="lpin" type="password" inputmode="numeric" autocomplete="off" maxlength="8"></label><div class="err" id="lerr" role="alert"></div><button class="pri" id="lgo">Buka</button><button class="sec" id="lforgot">Lupa PIN</button></section>
 <div class="wrap" id="app">
 <h1>Sistem Seliaan ODP dan OBB</h1>
-<div class="ub"><span id="who">Data disimpan dalam peranti ini sahaja. (v2.1)</span><button class="sec" id="bsync" hidden>Selaras</button><button class="sec" id="bdata">Data dan PIN</button><button class="sec" id="blout" hidden>Log keluar</button></div>
+<div class="ub"><span id="who">Data disimpan dalam peranti ini sahaja. (v2.2)</span><button class="sec" id="bsync" hidden>Selaras</button><button class="sec" id="bdata">Data dan PIN</button><button class="sec" id="blout" hidden>Log keluar</button></div>
 <div class="tabs" id="main"><button class="on" data-m="odp">ODP</button><button data-m="obb">OBB</button></div>
 <section id="odp">
 <div class="tabs sub" id="sub"><button class="on" data-s="semasa">Seliaan semasa <span id="c1"></span></button><button data-s="gantung">Digantung / dibatalkan <span id="c3"></span></button><button data-s="bebas">Telah dibebaskan <span id="c2"></span></button><button data-s="pindah">Berpindah <span id="c4"></span></button></div>
@@ -127,6 +127,7 @@ tbody td.empty{display:block!important;grid-column:1/-1;background:var(--card);b
 <label>Jenis permohonan<select id="qjenis"><option value="alamat">Tukar alamat sahaja (kekal dalam seliaan)</option><option value="keluar">Pindah ke PPD / SPD lain (keluar daripada seliaan)</option></select></label>
 <label>Tarikh permohonan pindah / tukar alamat<input id="qmohon" type="date"></label>
 <label>Alamat dipohon (baharu)<input id="qalamat"></label>
+<label>Jenis alamat dipohon<select id="qjenisA"><option value="">Sama seperti sekarang</option><option>Majikan</option><option>Keluarga</option></select></label>
 <label>Lokasi PPD / SPD baharu<input id="qlokasi"></label>
 <label>Tarikh diluluskan / kuatkuasa<input id="qlulus" type="date"></label>
 <div style="grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="pri" id="qsave">Simpan permohonan</button><button type="button" class="sec" id="qnew">Permohonan baharu</button></div>
@@ -144,8 +145,19 @@ tbody td.empty{display:block!important;grid-column:1/-1;background:var(--card);b
 </div>
 <p class="hint" id="bmsg" role="status" style="padding:0 16px"></p>
 </div>
+<div class="pl" id="bbk" hidden>
+<div class="dh2">Pembebasan (manual)</div>
+<p class="hint" id="bbst" style="padding:0 16px;margin:6px 0 0"></p>
+<div class="db" id="bbform">
+<label>Tarikh pembebasan<input id="bbt" type="date"></label>
+<label>Sebab pembebasan<select id="bbs"><option value="denda">Pembayaran denda</option><option value="meninggal">Meninggal dunia</option><option value="hilang">Menghilangkan diri / pelanggaran sebelum tamat</option><option value="lain">Lain-lain (nyatakan dalam ulasan)</option></select></label>
+<label class="w">Ulasan (taip sendiri)<input id="bbc"></label>
+<div style="grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="pri" id="bbsave">Sahkan pembebasan</button><button type="button" class="sec" id="bbundo" hidden>Batal pembebasan</button></div>
+</div>
+<p class="hint" id="bbmsg" role="status" style="padding:0 16px"></p>
+</div>
 <div class="err" id="err" role="alert"></div>
-<div class="df"><button type="button" class="sec" id="del" hidden style="margin-right:auto;color:var(--dg)">Padam rekod</button><button type="button" class="sec" id="cancel">Batal</button><button type="submit" class="pri">Simpan</button></div>
+<div class="df"><button type="button" class="sec" id="bbgo" hidden style="color:var(--ok)">Bebaskan</button><button type="button" class="sec" id="del" hidden style="margin-right:auto;color:var(--dg)">Padam rekod</button><button type="button" class="sec" id="cancel">Batal</button><button type="submit" class="pri">Simpan</button></div>
 </form>
 </dialog>
 
@@ -169,7 +181,7 @@ var pad=function(n){return String(n).padStart(2,"0")};
 var fmt=function(x){return x.getFullYear()+"-"+pad(x.getMonth()+1)+"-"+pad(x.getDate())};
 var T=function(s){var a=s.split("-").map(Number);return Date.UTC(a[0],a[1]-1,a[2])};
 var days=function(a,b){return Math.round((T(b)-T(a))/864e5)};
-var today=fmt(new Date());
+var today=fmt(new Date()),NOONF=new Date().getHours()>=12;
 var plus=function(n){var x=new Date();x.setDate(x.getDate()+n);return fmt(x)};
 var dmy=function(s){return s?s.split("-").reverse().join("/"):""};
 var esc=function(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})};
@@ -218,11 +230,11 @@ list.sort(function(a,b){return a.tamat<b.tamat?(tab==="semasa"?-1:1):a.tamat>b.t
 if(!list.length){$("tb").innerHTML='<tr><td colspan="8" class="empty">Tiada rekod. Tekan Tambah '+C.name+' untuk memasukkan rekod pertama.</td></tr>';return}
 $("tb").innerHTML=list.map(function(r,i){
 var ef=efTamat(r),b=days(today,ef),pill,mv=tab==="pindah"?movedItem(r):null;
-if(tab==="bebas")pill='<span class="pill p-ok">Tamat</span>';
+if(tab==="bebas")pill='<span class="pill p-ok">'+(r.bb&&r.bb.t?bbLabel(r.bb.s):"Tamat")+'</span>';
 else if(tab==="pindah")pill='<span class="pill p-ok">Berpindah</span>';
 else if(tab==="gantung")pill='<span class="pill p-dg">'+C.pill(r)+"</span>";
-else pill='<span class="pill '+(b<=7?"p-dg":b<=30?"p-wn":"p-ok")+'">'+b+" hari</span>";
-return'<tr data-id="'+r.id+'"><td>'+(i+1)+"</td><td>"+esc(r.nama)+(r.kategori==="Fast Track"?' <span class="pill p-ft">Fast Track</span>':"")+(tab==="semasa"&&(r.pbl||[]).some(function(q){return !q.kuat})?' <span class="pill p-wn">Mohon panggil balik</span>':"")+(tab==="semasa"&&(r.pel||[]).length?' <span class="pill p-wn">Pelanggaran</span>':"")+(tab==="semasa"&&pendPd(r)?' <span class="pill p-wn">Mohon pindah</span>':"")+'</td><td class="n">'+esc(r.kp)+"</td><td>"+esc(r.smpp)+"</td><td>"+esc(r.kerja)+"</td><td>"+(mv?esc(mv.lokasi):(r.pejabat===P1?"Bintulu":"Tatau"))+'</td><td class="n" data-l="'+(mv?"Kuatkuasa: ":"Tamat: ")+'">'+(mv?dmy(mv.lulus):dmy(ef)+(ef!==r.tamat?' <span class="pill p-wn">awal</span>':""))+"</td><td>"+pill+"</td></tr>"}).join("");
+else pill='<span class="pill '+(b<=7?"p-dg":b<=30?"p-wn":"p-ok")+'">'+(b<0?"Lewat "+(-b)+" hari":b+" hari")+"</span>";
+return'<tr data-id="'+r.id+'"><td>'+(i+1)+"</td><td>"+esc(r.nama)+(r.kategori==="Fast Track"?' <span class="pill p-ft">Fast Track</span>':"")+(tab==="semasa"&&(r.pbl||[]).some(function(q){return !q.kuat})?' <span class="pill p-wn">Mohon panggil balik</span>':"")+(tab==="semasa"&&(r.pel||[]).length?' <span class="pill p-wn">Pelanggaran</span>':"")+(tab==="semasa"&&pendPd(r)?' <span class="pill p-wn">Mohon pindah</span>':"")+'</td><td class="n">'+esc(r.kp)+"</td><td>"+esc(r.smpp)+"</td><td>"+esc(r.kerja)+"</td><td>"+(mv?esc(mv.lokasi):(r.pejabat===P1?"Bintulu":"Tatau"))+'</td><td class="n" data-l="'+(mv?"Kuatkuasa: ":(tab==="bebas"&&r.bb&&r.bb.t?"Bebas: ":"Tamat: "))+'">'+(mv?dmy(mv.lulus):(tab==="bebas"&&r.bb&&r.bb.t?dmy(r.bb.t):dmy(ef)+(ef!==r.tamat?' <span class="pill p-wn">awal</span>':"")))+"</td><td>"+pill+"</td></tr>"}).join("");
 }
 
 function build(){
@@ -235,7 +247,7 @@ else{i='<input name="'+n+'" type="'+t+'">'}
 return'<label class="'+c+'">'+l+(REQ[n]?" *":"")+i+"</label>"}).join("");
 }
 function el(n){return $("f").elements[n]}
-function calc(){var m=el("mula").value,t=el("tamat").value,hh=$("tefek");el("tempoh").value=(m&&t)?days(m,t):"";if(t){var e=efTamat({tamat:t});hh.textContent=e===t?"Tarikh bebas sebenar: "+dmy(t):"Tarikh bebas sebenar: "+dmy(e)+" (tarikh tamat jatuh pada "+offWhy(t)+", jadi dibebaskan pada hari bekerja sebelumnya)"}else hh.textContent=""}
+function calc(){var m=el("mula").value,t=el("tamat").value,hh=$("tefek");el("tempoh").value=(m&&t)?days(m,t)+1:"";if(t){var e=efTamat({tamat:t});hh.textContent=e===t?"Tarikh bebas sebenar: "+dmy(t):"Tarikh bebas sebenar: "+dmy(e)+" (tarikh tamat jatuh pada "+offWhy(t)+", jadi dibebaskan pada hari bekerja sebelumnya)"}else hh.textContent=""}
 
 function openForm(id){
 editId=id;$("err").textContent="";build();
@@ -248,7 +260,7 @@ var d=this.value.replace(/\D/g,"").slice(0,12),o=d.slice(0,6);
 if(d.length>6)o+="-"+d.slice(6,8);if(d.length>8)o+="-"+d.slice(8);
 this.value=o;if(d.length===12)el("jantina").value=(+d[11])%2?"Lelaki":"Perempuan"});
 el("mula").addEventListener("change",calc);el("tamat").addEventListener("change",calc);
-$("pl").hidden=!r;$("pmsg").textContent="";clearP();if(r)drawPel(r);calc();$("qd").hidden=!r;$("qmsg").textContent="";clearQ();qsync();if(r)drawQ(r);$("bd").hidden=!r||C.key!=="obb";$("bmsg").textContent="";clearB();if(r&&C.key==="obb")drawB(r);$("del").hidden=!r;$("dlg").showModal();
+$("pl").hidden=!r;$("pmsg").textContent="";clearP();if(r)drawPel(r);calc();$("qd").hidden=!r;$("qmsg").textContent="";clearQ();qsync();if(r)drawQ(r);$("bd").hidden=!r||C.key!=="obb";$("bmsg").textContent="";clearB();if(r&&C.key==="obb")drawB(r);$("bbk").hidden=!r;$("bbgo").hidden=!r;$("bbmsg").textContent="";if(r)drawBB(r);$("del").hidden=!r;$("dlg").showModal();
 }
 
 $("f").addEventListener("submit",function(ev){
@@ -283,7 +295,7 @@ $("main").addEventListener("click",function(e){var b=e.target.closest("button");
 [].forEach.call($("main").children,function(x){x.classList.toggle("on",x===b)});
 C=MODS[b.dataset.m];F=C.F;rows=DB[C.key]||(DB[C.key]=load());tab="semasa";KT="";$("kat").value="";$("q").value="";$("xs").textContent="";skin();render()});
 var pe=null;
-function st(r){if(r.del)return"del";var g=(r.pel||[]).some(function(p){return C.mv.some(function(k){return p[k]})})||(r.pbl||[]).some(function(q){return q.kuat});return g?'gantung':(movedItem(r)?'pindah':(days(today,efTamat(r))<0?'bebas':'semasa'))}
+function st(r){if(r.del)return"del";if(r.bb&&r.bb.t)return"bebas";var g=(r.pel||[]).some(function(p){return C.mv.some(function(k){return p[k]})})||(r.pbl||[]).some(function(q){return q.kuat});return g?'gantung':(movedItem(r)?'pindah':(autoBebas(r)?'bebas':'semasa'))}
 function curRow(){return rows.filter(function(x){return x.id===editId})[0]}
 function clearP(){pe=null;['pjenis','ptarikh','ptempat','pnama','pgantung','pbatal'].forEach(function(k){$(k).value=''})}
 function drawPel(r){var l=r.pel||[];$('plist').innerHTML=l.length?l.map(function(p,i){return '<div class="pc'+(pe===i?' on':'')+'"><span><b>'+esc(p.jenis)+'</b> | '+dmy(p.tarikh)+' | '+esc(p.tempat||'-')+(p.nama?' ('+esc(p.nama)+')':'')+'<br>'+C.sh[0]+': '+(dmy(p.gantung)||'-')+' | '+C.sh[1]+': '+(dmy(p.batal)||'-')+'</span><button type="button" class="sec" data-pi="'+i+'">Kemas kini</button></div>'}).join(''):'<p class="hint" style="padding:0 16px">Belum ada pelanggaran dicatat.</p>'}
@@ -306,8 +318,8 @@ function pcell(r,c){var l=r.pel||[];return l.map(function(p,i){var v=c[1]==='_t'
 function PB(){return[['Sebab Panggil Balik (Lain)','sebab',0,'b'],['Tarikh Mohon Panggil Balik (Sebab Lain)','mohon',1,'b'],['Tarikh Panggil Balik Berkuatkuasa (Sebab Lain)','kuat',1,'b']]}
 function bcell(r,c){var l=r.pbl||[];return l.map(function(p,i){var v=c[2]?dmy(p[c[1]]):(p[c[1]]||'');return (l.length>1?(i+1)+') ':'')+(v||'-')}).join('\n')}
 function wd(i){if(C.key==='obb'){if(i===2)return 12;if(i>2)return WID[i-1]}return WID[i]}
-function colsFor(list){var b=COLS.map(function(c){var l=C.hd[c[1]];return l?[l].concat(c.slice(1)):c});if(C.key==='obb')b.splice(2,0,['Kategori','kategori']);return b.concat(list.some(function(r){return (r.pel||[]).length})?PC():[]).concat(list.some(function(r){return (r.pdh||[]).length})?PD():[]).concat(list.some(function(r){return (r.pbl||[]).length})?PB():[])}
-function cell(r,c,i){if(c[3]==='b')return bcell(r,c);if(c[1]==='kategori')return r.kategori||'Biasa';if(c[1]==='_ef')return dmy(efTamat(r));if(c[3]==='p')return pcell(r,c);if(c[3]==='d')return dcell(r,c);if(c[1]==='alamat'&&c.length===2)return curAlamat(r);return c.length===1?i+1:(c[2]?dmy(r[c[1]]):(r[c[1]]==null?'':r[c[1]]))}
+function colsFor(list){var b=COLS.map(function(c){var l=C.hd[c[1]];return l?[l].concat(c.slice(1)):c});if(C.key==='obb')b.splice(2,0,['Kategori','kategori']);return b.concat(list.some(function(r){return (r.pel||[]).length})?PC():[]).concat(list.some(function(r){return (r.pdh||[]).length})?PD():[]).concat(list.some(function(r){return (r.pbl||[]).length})?PB():[]).concat(list.some(function(r){return r.bb&&r.bb.t})?[['Sebab Pembebasan','_bs'],['Ulasan Pembebasan','_bk']]:[])}
+function cell(r,c,i){if(c[3]==='b')return bcell(r,c);if(c[1]==='kategori')return r.kategori||'Biasa';if(c[1]==='_ef')return dmy((r.bb&&r.bb.t)||efTamat(r));if(c[1]==='_bs')return r.bb&&r.bb.t?bbLabel(r.bb.s):'';if(c[1]==='_bk')return r.bb&&r.bb.t?(r.bb.k||''):'';if(c[1]==='tempoh')return (r.mula&&r.tamat)?days(r.mula,r.tamat)+1:'';if(c[3]==='p')return pcell(r,c);if(c[3]==='d')return dcell(r,c);if(c[1]==='alamat'&&c.length===2)return alamatText(r);return c.length===1?i+1:(c[2]?dmy(r[c[1]]):(r[c[1]]==null?'':r[c[1]]))}
 function getList(t,useQ){var q=useQ?$('q').value.trim().toLowerCase():'',off=$('off').value,d=t==='semasa'?1:-1;return rows.filter(function(r){return st(r)===t&&inScope(r)&&(!off||r.pejabat===off)&&(!q||[r.nama,r.kp,r.smpp].join(' ').toLowerCase().indexOf(q)>-1)}).sort(function(a,b){return (a.tamat<b.tamat?-1:a.tamat>b.tamat?1:0)*d})}
 function meta(tb){var off=$('off').value;return{t1:off||(P1+' / '+P2),t2:'Senarai '+C.name+' '+C.tl[tb]+(KT?' ('+KT+')':'')+(YR?' - '+(YB==='tamat'?'Tahun bebas ':'Tahun mula ')+YR:''),t3:'Dijana pada '+dmy(today)}}
 function mkPdf(secs){var doc=new window.jspdf.jsPDF({orientation:'landscape',unit:'mm',format:'a4'}),W=doc.internal.pageSize.getWidth(),H=doc.internal.pageSize.getHeight();
@@ -349,17 +361,17 @@ function pendPd(r){return (r.pdh||[]).some(function(q){return !q.lulus||q.lulus>
 function curAlamat(r){var b=null;(r.pdh||[]).forEach(function(q){if(q.alamat&&q.lulus&&q.lulus<=today&&(!b||q.lulus>=b.lulus))b=q});return b?b.alamat:(r.alamat||'')}
 function PD(){return[['Jenis Permohonan','jenis',0,'d'],['Tarikh Permohonan Pindah / Tukar Alamat','mohon',1,'d'],['Alamat Dipohon (Baharu)','alamat',0,'d'],['Lokasi PPD / SPD Baharu','lokasi',0,'d'],['Tarikh Diluluskan / Kuatkuasa','lulus',1,'d']]}
 function jlab(j){return j==='keluar'?'Pindah ke PPD / SPD lain':'Tukar alamat (kekal dalam seliaan)'}
-function dcell(r,c){var l=r.pdh||[];return l.map(function(p,i){var v=c[1]==='jenis'?jlab(p.jenis):(c[2]?dmy(p[c[1]]):(p[c[1]]||''));return (l.length>1?(i+1)+') ':'')+(v||'-')}).join('\n')}
+function dcell(r,c){var l=r.pdh||[];return l.map(function(p,i){var v=c[1]==='jenis'?jlab(p.jenis):(c[2]?dmy(p[c[1]]):(p[c[1]]||''));if(c[1]==='alamat'&&p.jenisA&&v)v+=' ('+p.jenisA+')';return (l.length>1?(i+1)+') ':'')+(v||'-')}).join('\n')}
 function qsync(){$('qlokasi').placeholder=$('qjenis').value==='keluar'?'Wajib diisi':'Isi jika berpindah ke PPD / SPD lain'}
 function pstat(q){if(q.jenis!=='keluar')return q.lulus?(q.lulus<=today?'Alamat baharu sudah berkuat kuasa; kekal dalam seliaan':'Alamat baharu berkuat kuasa pada '+dmy(q.lulus)+'; kekal dalam seliaan'):'Belum diluluskan; kekal dalam seliaan';return !q.lulus?'Belum diluluskan; kekal dalam seliaan':(q.lulus<=today?'Telah berpindah; keluar daripada seliaan':'Akan keluar daripada seliaan pada '+dmy(q.lulus))}
-function clearQ(){pe2=null;$('qjenis').value='alamat';['qmohon','qalamat','qlokasi','qlulus'].forEach(function(k){$(k).value=''})}
+function clearQ(){pe2=null;$('qjenis').value='alamat';['qmohon','qalamat','qjenisA','qlokasi','qlulus'].forEach(function(k){$(k).value=''})}
 function drawQ(r){var l=r.pdh||[];$('qlist').innerHTML='<p class="hint" style="padding:0 16px;margin:6px 0 0">Alamat dalam laporan: '+esc(curAlamat(r)||'-')+'</p>'+(l.length?l.map(function(q,i){return '<div class="pc'+(pe2===i?' on':'')+'"><span><b>'+jlab(q.jenis)+'</b><br>Mohon: '+(dmy(q.mohon)||'-')+' | Alamat baharu: '+esc(q.alamat||'-')+(q.jenis==='keluar'?' | Lokasi baharu: '+esc(q.lokasi||'-'):'')+'<br>Diluluskan / kuatkuasa: '+(dmy(q.lulus)||'Belum diluluskan')+'<br><b>Status: '+pstat(q)+'</b></span><button type="button" class="sec" data-qi="'+i+'">Kemas kini</button></div>'}).join(''):'<p class="hint" style="padding:0 16px">Belum ada permohonan dicatat.</p>')}
 $('qd').addEventListener('keydown',function(e){if(e.key==='Enter')e.preventDefault()});
 $('qjenis').addEventListener('change',qsync);
 $('qlokasi').addEventListener('input',function(){$('qjenis').value=this.value.trim()?'keluar':'alamat';qsync()});
-$('qlist').addEventListener('click',function(e){var b=e.target.closest('button[data-qi]');if(!b)return;var r=curRow(),i=+b.dataset.qi,q=r.pdh[i];pe2=i;$('qjenis').value=q.jenis||'alamat';$('qmohon').value=q.mohon||'';$('qalamat').value=q.alamat||'';$('qlokasi').value=q.lokasi||'';$('qlulus').value=q.lulus||'';qsync();$('qmsg').textContent='';drawQ(r)});
+$('qlist').addEventListener('click',function(e){var b=e.target.closest('button[data-qi]');if(!b)return;var r=curRow(),i=+b.dataset.qi,q=r.pdh[i];pe2=i;$('qjenis').value=q.jenis||'alamat';$('qmohon').value=q.mohon||'';$('qalamat').value=q.alamat||'';$('qjenisA').value=q.jenisA||'';$('qlokasi').value=q.lokasi||'';$('qlulus').value=q.lulus||'';qsync();$('qmsg').textContent='';drawQ(r)});
 $('qnew').addEventListener('click',function(){clearQ();qsync();$('qmsg').textContent='';drawQ(curRow())});
-$('qsave').addEventListener('click',function(){var r=curRow(),k=$('qjenis').value==='keluar'||!!$('qlokasi').value.trim(),q={jenis:k?'keluar':'alamat',mohon:$('qmohon').value,alamat:$('qalamat').value.trim(),lokasi:k?$('qlokasi').value.trim():'',lulus:$('qlulus').value},e='';
+$('qsave').addEventListener('click',function(){var r=curRow(),k=$('qjenis').value==='keluar'||!!$('qlokasi').value.trim(),q={jenis:k?'keluar':'alamat',mohon:$('qmohon').value,alamat:$('qalamat').value.trim(),jenisA:$('qjenisA').value,lokasi:k?$('qlokasi').value.trim():'',lulus:$('qlulus').value},e='';
 if(!q.mohon)e='Isi tarikh permohonan.';else if(!k&&!q.alamat)e='Isi alamat dipohon (baharu).';else if(k&&!q.lokasi)e='Isi lokasi PPD / SPD baharu.';else if(q.lulus&&q.lulus<q.mohon)e='Tarikh kuatkuasa tidak boleh sebelum tarikh permohonan.';
 if(e){$('err').textContent=e;return}
 $('err').textContent='';r.pdh=r.pdh||[];q.u=NOW();q.pid=pe2===null?uid():r.pdh[pe2].pid;if(pe2===null)r.pdh.push(q);else r.pdh[pe2]=q;save();clearQ();qsync();drawQ(r);render();
@@ -381,7 +393,7 @@ var CFG=(window.SLN_FB&&window.SLN_FB.apiKey&&window.SLN_FB.projectId)?window.SL
 try{RCM=JSON.parse(localStorage.getItem(RCK)||'{}')}catch(e){RCM={}}
 function saveRC(){try{localStorage.setItem(RCK,JSON.stringify(RCM))}catch(e){}}
 function kick(){if(!CFG||!AUTH)return;clearTimeout(kt);kt=setTimeout(function(){syncNow()},1500)}
-function setSyn(t){$('who').textContent=t+' (v2.1)'}
+function setSyn(t){$('who').textContent=t+' (v2.2)'}
 function fbBase(){return 'https://firestore.googleapis.com/v1/projects/'+CFG.projectId+'/databases/(default)/documents'}
 function loadAuth(){try{AUTH=JSON.parse(localStorage.getItem(AK)||'null')}catch(e){AUTH=null}}
 function saveAuth(){try{if(AUTH)localStorage.setItem(AK,JSON.stringify(AUTH));else localStorage.removeItem(AK)}catch(e){}}
@@ -435,7 +447,7 @@ $('bsync').addEventListener('click',function(){syncNow(true)});
 setInterval(function(){if(!document.hidden&&AUTH)syncNow()},40000);
 document.addEventListener('visibilitychange',function(){if(!document.hidden&&AUTH)syncNow()});
 var YR='',YB='mula',KT='';
-function yearOf(r){return YB==='tamat'?String(efTamat(r)||'').slice(0,4):String(r.mula||'').slice(0,4)}
+function yearOf(r){return YB==='tamat'?String((r.bb&&r.bb.t)||efTamat(r)||'').slice(0,4):String(r.mula||'').slice(0,4)}
 function inScope(r){return !r.del&&(!KT||(r.kategori||'Biasa')===KT)&&(!YR||yearOf(r)===YR)}
 function drawYears(){var ys={'2026':1,'2027':1},cn={},all=0;ys[String(new Date().getFullYear())]=1;
 rows.forEach(function(r){if(r.del||(KT&&(r.kategori||'Biasa')!==KT))return;var y=yearOf(r);if(/^\d{4}$/.test(y)){ys[y]=1;cn[y]=(cn[y]||0)+1}all++});
@@ -455,6 +467,20 @@ if(!q.sebab)e='Nyatakan sebab panggil balik.';else if(q.mohon&&q.kuat&&q.kuat<q.
 if(e){$('err').textContent=e;return}
 $('err').textContent='';r.pbl=r.pbl||[];q.u=NOW();q.pid=pe3===null?uid():r.pbl[pe3].pid;if(pe3===null)r.pbl.push(q);else r.pbl[pe3]=q;save();clearB();drawB(r);render();
 $('bmsg').textContent=q.kuat?'Disimpan. Nama ini kini berada dalam senarai Panggil balik.':'Disimpan. Nama kekal dalam seliaan sehingga tarikh panggil balik berkuatkuasa diisi.'});
+function autoBebas(r){if((r.pel||[]).length)return false;var d=days(today,efTamat(r));return d<0||(d===0&&NOONF)}
+function bbLabel(s){return {denda:'Bayar denda',meninggal:'Meninggal dunia',hilang:'Hilang diri / pelanggaran',lain:'Lain-lain'}[s]||'Dibebaskan'}
+function alamatText(r){var b=null;(r.pdh||[]).forEach(function(q){if(q.alamat&&q.lulus&&q.lulus<=today&&(!b||q.lulus>=b.lulus))b=q});var a=b?b.alamat:(r.alamat||''),j=b?(b.jenisA||r.jenisAlamat):r.jenisAlamat;return a+(a&&j?'\n('+j+')':'')}
+function drawBB(r){var b=r.bb,on=!!(b&&b.t);$('bbst').textContent=on?('Telah dibebaskan pada '+dmy(b.t)+' | '+bbLabel(b.s)+(b.k?' | '+b.k:'')):'Belum dibebaskan secara manual.';$('bbundo').hidden=!on;
+if(on){$('bbt').value=b.t;$('bbs').value=b.s||'lain';$('bbc').value=b.k||''}else{$('bbt').value=today;$('bbs').value='denda';$('bbc').value=''}}
+$('bbsave').addEventListener('click',function(){var r=curRow(),t=$('bbt').value,s=$('bbs').value,k=$('bbc').value.trim();
+if(!t){$('err').textContent='Isi tarikh pembebasan.';return}
+if(s==='lain'&&!k){$('err').textContent='Nyatakan ulasan bagi sebab lain-lain.';return}
+$('err').textContent='';r.bb={t:t,s:s,k:k,u:NOW()};save();drawBB(r);render();$('bbmsg').textContent='Disimpan. Nama ini kini berada dalam senarai Telah dibebaskan.'});
+$('bbundo').addEventListener('click',function(){var r=curRow();if(!confirm('Batalkan pembebasan manual dan pulihkan ke keadaan asal?'))return;r.bb={t:'',s:'',k:'',u:NOW()};save();drawBB(r);render();$('bbmsg').textContent='Pembebasan dibatalkan.'});
+$('bbgo').addEventListener('click',function(){$('bbk').scrollIntoView({behavior:'smooth',block:'center'});$('bbc').focus()});
+$('bbk').addEventListener('keydown',function(e){if(e.key==='Enter')e.preventDefault()});
+function tick(){var t=fmt(new Date()),n=new Date().getHours()>=12;if(t!==today||n!==NOONF){today=t;NOONF=n;render()}}
+setInterval(tick,60000);document.addEventListener('visibilitychange',function(){if(!document.hidden)tick()});
 var FIELDS=['nama','kp','smpp','jantina','agama','bangsa','perintah','dari','kes','mula','tamat','tempoh','daerah','kerja','pejabat','jenisAlamat','alamat','kategori'];
 function loadMod(k){var c=C;C=MODS[k];var r=load();C=c;return r}
 function allData(){if(!DB.obb)DB.obb=loadMod('obb');if(!DB.odp)DB.odp=loadMod('odp');return{odp:DB.odp,obb:DB.obb}}
@@ -469,6 +495,7 @@ var pm={};l.pel=l.pel||[];l.pel.forEach(function(p){pm[p.pid]=p});
 var dm={};l.pdh=l.pdh||[];l.pdh.forEach(function(p){dm[p.pid]=p});
 (x.pdh||[]).forEach(function(p){if(!p.pid)return;var q=dm[p.pid];if(!q){l.pdh.push(Object.assign({},p));ch=true}else if((p.u||EPOCH)>(q.u||EPOCH)){Object.assign(q,p);ch=true}});
 if((x.pbl||[]).length){var bm={};l.pbl=l.pbl||[];l.pbl.forEach(function(p){bm[p.pid]=p});(x.pbl||[]).forEach(function(p){if(!p.pid)return;var q=bm[p.pid];if(!q){l.pbl.push(Object.assign({},p));ch=true}else if((p.u||EPOCH)>(q.u||EPOCH)){Object.assign(q,p);ch=true}})}
+if(x.bb&&x.bb.u&&x.bb.u>((l.bb&&l.bb.u)||'')){l.bb=x.bb;ch=true}
 if(ch)upd++;else same++});
 return{add:add,upd:upd,same:same}}
 function mergeAll(inc){var d=allData(),res={};['odp','obb'].forEach(function(k){res[k]=mergeInto(d[k],(inc[k]||[]).filter(function(x){return x&&/^\d{6}-\d{2}-\d{4}$/.test(x.kp)}))});var h0=Object.keys(HOL).length;(inc.cuti||[]).forEach(function(x){if(x&&/^\d{4}-\d{2}-\d{2}$/.test(x.d)&&!HOL[x.d])HOL[x.d]=x.n||'Cuti umum'});saveHol();res.cuti=Object.keys(HOL).length-h0;rows=DB[C.key];saveAll();render();return res}
