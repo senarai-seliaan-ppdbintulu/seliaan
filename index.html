@@ -84,7 +84,7 @@ tbody td.empty{display:block!important;grid-column:1/-1;background:var(--card);b
 <section id="lk" hidden><h2>Aplikasi dikunci</h2><label>Masukkan PIN<input id="lpin" type="password" inputmode="numeric" autocomplete="off" maxlength="8"></label><div class="err" id="lerr" role="alert"></div><button class="pri" id="lgo">Buka</button><button class="sec" id="lforgot">Lupa PIN</button></section>
 <div class="wrap" id="app">
 <h1>Sistem Seliaan ODP dan OBB</h1>
-<div class="ub"><span id="who">Data disimpan dalam peranti ini sahaja. (v2.2)</span><button class="sec" id="bsync" hidden>Selaras</button><button class="sec" id="bdata">Data dan PIN</button><button class="sec" id="blout" hidden>Log keluar</button></div>
+<div class="ub"><span id="who">Data disimpan dalam peranti ini sahaja. (v2.4)</span><button class="sec" id="bsync" hidden>Selaras</button><button class="sec" id="bdata">Data dan PIN</button><button class="sec" id="blout" hidden>Log keluar</button></div>
 <div class="tabs" id="main"><button class="on" data-m="odp">ODP</button><button data-m="obb">OBB</button></div>
 <section id="odp">
 <div class="tabs sub" id="sub"><button class="on" data-s="semasa">Seliaan semasa <span id="c1"></span></button><button data-s="gantung">Digantung / dibatalkan <span id="c3"></span></button><button data-s="bebas">Telah dibebaskan <span id="c2"></span></button><button data-s="pindah">Berpindah <span id="c4"></span></button></div>
@@ -318,32 +318,93 @@ function pcell(r,c){var l=r.pel||[];return l.map(function(p,i){var v=c[1]==='_t'
 function PB(){return[['Sebab Panggil Balik (Lain)','sebab',0,'b'],['Tarikh Mohon Panggil Balik (Sebab Lain)','mohon',1,'b'],['Tarikh Panggil Balik Berkuatkuasa (Sebab Lain)','kuat',1,'b']]}
 function bcell(r,c){var l=r.pbl||[];return l.map(function(p,i){var v=c[2]?dmy(p[c[1]]):(p[c[1]]||'');return (l.length>1?(i+1)+') ':'')+(v||'-')}).join('\n')}
 function wd(i){if(C.key==='obb'){if(i===2)return 12;if(i>2)return WID[i-1]}return WID[i]}
-function colsFor(list){var b=COLS.map(function(c){var l=C.hd[c[1]];return l?[l].concat(c.slice(1)):c});if(C.key==='obb')b.splice(2,0,['Kategori','kategori']);return b.concat(list.some(function(r){return (r.pel||[]).length})?PC():[]).concat(list.some(function(r){return (r.pdh||[]).length})?PD():[]).concat(list.some(function(r){return (r.pbl||[]).length})?PB():[]).concat(list.some(function(r){return r.bb&&r.bb.t})?[['Sebab Pembebasan','_bs'],['Ulasan Pembebasan','_bk']]:[])}
+var CMP=['nama','kategori','kp','smpp','kes','mula','tamat','_ef','daerah','alamat'];
+function colsFor(list,v){var b=COLS.map(function(c){var l=C.hd[c[1]];return l?[l].concat(c.slice(1)):c});if(C.key==='obb')b.splice(2,0,['Kategori','kategori']);
+var has=function(f){return list.some(f)};
+if(v==='pel')return b.filter(function(c){return c[1]===undefined||CMP.indexOf(c[1])>-1}).concat(PC()).concat(has(function(r){return (r.pbl||[]).length})?PB():[]).concat(has(function(r){return r.bb&&r.bb.t})?[['Sebab Pembebasan','_bs'],['Ulasan Pembebasan','_bk']]:[]);
+return b.concat(has(function(r){return (r.pel||[]).length})?PC():[]).concat(has(function(r){return (r.pdh||[]).length})?PD():[]).concat(has(function(r){return (r.pbl||[]).length})?PB():[]).concat(has(function(r){return r.bb&&r.bb.t})?[['Sebab Pembebasan','_bs'],['Ulasan Pembebasan','_bk']]:[])}
+var KW={nama:26,kategori:12,kp:16,smpp:14,jantina:10,agama:10,bangsa:10,perintah:18,dari:18,kes:22,mula:12,tamat:12,_ef:14,tempoh:10,daerah:12,kerja:18,alamat:34,_bs:22,_bk:28};
+var PW={p:{jenis:26,tarikh:15,_t:28,gantung:16,batal:16},d:{jenis:24,mohon:16,alamat:30,lokasi:22,lulus:16},b:{sebab:26,mohon:16,kuat:16}};
+function colW(c,i){if(i===0&&c.length===1)return 6;if(c[3]&&PW[c[3]])return PW[c[3]][c[1]]||16;return KW[c[1]]||16}
 function cell(r,c,i){if(c[3]==='b')return bcell(r,c);if(c[1]==='kategori')return r.kategori||'Biasa';if(c[1]==='_ef')return dmy((r.bb&&r.bb.t)||efTamat(r));if(c[1]==='_bs')return r.bb&&r.bb.t?bbLabel(r.bb.s):'';if(c[1]==='_bk')return r.bb&&r.bb.t?(r.bb.k||''):'';if(c[1]==='tempoh')return (r.mula&&r.tamat)?days(r.mula,r.tamat)+1:'';if(c[3]==='p')return pcell(r,c);if(c[3]==='d')return dcell(r,c);if(c[1]==='alamat'&&c.length===2)return alamatText(r);return c.length===1?i+1:(c[2]?dmy(r[c[1]]):(r[c[1]]==null?'':r[c[1]]))}
 function getList(t,useQ){var q=useQ?$('q').value.trim().toLowerCase():'',off=$('off').value,d=t==='semasa'?1:-1;return rows.filter(function(r){return st(r)===t&&inScope(r)&&(!off||r.pejabat===off)&&(!q||[r.nama,r.kp,r.smpp].join(' ').toLowerCase().indexOf(q)>-1)}).sort(function(a,b){return (a.tamat<b.tamat?-1:a.tamat>b.tamat?1:0)*d})}
 function meta(tb){var off=$('off').value;return{t1:off||(P1+' / '+P2),t2:'Senarai '+C.name+' '+C.tl[tb]+(KT?' ('+KT+')':'')+(YR?' - '+(YB==='tamat'?'Tahun bebas ':'Tahun mula ')+YR:''),t3:'Dijana pada '+dmy(today)}}
+/* ===== Laporan: jadual berasingan bagi pelanggaran, panggil balik dan permohonan pindah ===== */
+function pcol(t,f,w){return{h:t,f:f,w:w,s:true}}
+function icol(t,f,w){return{h:t,f:f,w:w,s:false}}
+function pend(r){return (r.pdh||[]).filter(function(q){return !q.lulus||q.lulus>today})}
+function catOf(r){return (r.pel||[]).length?'B':(r.pbl||[]).length?'C':pend(r).length?'D':'A'}
+function catatan(r,skip){var a=[];
+if(skip!=='C'&&(r.pbl||[]).length)a.push('Panggil balik (sebab lain): '+r.pbl.map(function(q){return (q.sebab||'-')+(q.kuat?' ('+dmy(q.kuat)+')':' (mohon)')}).join('; '));
+if(skip!=='D'&&pend(r).length)a.push('Permohonan '+pend(r).map(function(q){return q.jenis==='keluar'?'pindah ke '+(q.lokasi||'-'):'tukar alamat'}).join('; '));
+return a.join('\n')}
+function byDate(k){return function(r){return (r[k]||[]).slice().sort(function(a,b){var x=a.tarikh||a.mohon||'',y=b.tarikh||b.mohon||'';return x<y?-1:x>y?1:0})}}
+var itemsPel=byDate('pel'),itemsPbl=byDate('pbl'),itemsPdh=byDate('pdh');
+function itemsPendPdh(r){return itemsPdh(r).filter(function(q){return !q.lulus||q.lulus>today})}
+function dd(v){return dmy(v)||'-'}
+function cPerson(){var c=[pcol('Bil.',function(r,q,i){return i+1},6),pcol('Nama',function(r){return r.nama||''},26)];
+if(C.key==='obb')c.push(pcol('Kategori',function(r){return r.kategori||'Biasa'},12));
+c.push(pcol('No. KP',function(r){return r.kp||''},16),pcol('No. SMPP',function(r){return r.smpp||''},14),pcol(C.key==='obb'?'Tarikh Mula Lesen':'Tarikh Mula Parol',function(r){return dd(r.mula)},13),pcol(C.key==='obb'?'Tarikh Tamat Lesen':'Tarikh Tamat Parol',function(r){return dd(r.tamat)},13));return c}
+function iPel(){return [icol(C.pl.jenis,function(r,q){return q&&q.jenis||'-'},28),icol(C.pl.tarikh,function(r,q){return q?dd(q.tarikh):'-'},15),icol('Tempat Ditahan',function(r,q){return q?(((q.tempat||'')+(q.nama?' - '+q.nama:''))||'-'):'-'},28),icol(C.pl.gantung,function(r,q){return q?dd(q.gantung):'-'},16),icol(C.pl.batal,function(r,q){return q?dd(q.batal):'-'},16)]}
+function iPbl(){return [icol('Sebab Panggil Balik (Lain)',function(r,q){return q&&q.sebab||'-'},34),icol('Tarikh Mohon Panggil Balik',function(r,q){return q?dd(q.mohon):'-'},16),icol('Tarikh Panggil Balik (Berkuatkuasa)',function(r,q){return q?dd(q.kuat):'-'},18)]}
+function iPdh(){return [icol('Jenis Permohonan',function(r,q){return q?jlab(q.jenis):'-'},26),icol('Tarikh Permohonan',function(r,q){return q?dd(q.mohon):'-'},15),icol('Alamat Dipohon (Baharu)',function(r,q){return q?((q.alamat||'-')+(q.jenisA?' ('+q.jenisA+')':'')):'-'},32),icol('Lokasi PPD / SPD Baharu',function(r,q){return q&&q.lokasi||'-'},24),icol('Tarikh Diluluskan / Kuatkuasa',function(r,q){return q?dd(q.lulus):'-'},16)]}
+function cc(list,skip){return list.some(function(r){return catatan(r,skip)})?[pcol('Catatan',function(r){return catatan(r,skip)},34)]:[]}
+function baseCols(list){var b=COLS.map(function(c){var l=C.hd[c[1]];return l?[l].concat(c.slice(1)):c});if(C.key==='obb')b.splice(2,0,['Kategori','kategori']);
+if(list.some(function(r){return r.bb&&r.bb.t}))b=b.concat([['Sebab Pembebasan','_bs'],['Ulasan Pembebasan','_bk']]);
+return b.map(function(c,i){return{h:c[0],w:colW(c,i),s:true,f:function(r,q,ix){return String(cell(r,c,ix))}}})}
+function mkBlock(title,persons,cols,items,sfx){return{title:title,persons:persons,cols:cols,items:items,sfx:sfx}}
+function blocksFor(tk,list){var o=[],n=function(a){return ' ('+a.length+' orang)'};
+if(tk==='semasa'){var g={A:[],B:[],C:[],D:[]};list.forEach(function(r){g[catOf(r)].push(r)});var sp=g.B.length||g.C.length||g.D.length;
+if(g.A.length||!sp)o.push(mkBlock(sp?'Seliaan semasa'+n(g.A):'',g.A,baseCols(g.A),null,''));
+if(g.B.length)o.push(mkBlock('Ada '+C.pt.toLowerCase()+', belum diputuskan'+n(g.B),g.B,cPerson().concat(iPel(),cc(g.B,'B')),itemsPel,' (Pelanggaran)'));
+if(g.C.length)o.push(mkBlock('Panggil balik atas sebab lain, belum berkuatkuasa'+n(g.C),g.C,cPerson().concat(iPbl(),cc(g.C,'C')),itemsPbl,' (PB Lain)'));
+if(g.D.length)o.push(mkBlock('Permohonan pindah / tukar alamat, belum diluluskan'+n(g.D),g.D,cPerson().concat(iPdh()),itemsPendPdh,' (Pindah)'))}
+else if(tk==='gantung'){var P=list.filter(function(r){return (r.pel||[]).length}),Q=list.filter(function(r){return !(r.pel||[]).length});
+if(P.length)o.push(mkBlock(Q.length?C.pt+n(P):'',P,cPerson().concat(iPel(),cc(P,'B')),itemsPel,''));
+if(Q.length)o.push(mkBlock(P.length?'Panggil balik atas sebab lain'+n(Q):'',Q,cPerson().concat(iPbl(),cc(Q,'C')),itemsPbl,P.length?' (PB Lain)':''))}
+else if(tk==='pindah'){o.push(mkBlock('',list,cPerson().concat(iPdh()),itemsPdh,''))}
+else{o.push(mkBlock('',list,baseCols(list),null,''))}
+if(!o.length)o.push(mkBlock('',[],baseCols([]),null,''));
+return o}
 function mkPdf(secs){var doc=new window.jspdf.jsPDF({orientation:'landscape',unit:'mm',format:'a4'}),W=doc.internal.pageSize.getWidth(),H=doc.internal.pageSize.getHeight();
 var im=function(u,right){if(!u)return;try{var p=doc.getImageProperties(u),h=18,w=h*p.width/p.height;doc.addImage(u,p.fileType,right?W-10-w:10,7,w,h)}catch(e){}};
-secs.forEach(function(s,k){var cols=colsFor(s.list);if(k)doc.addPage();
-im(LG.l1,false);im(LG.l2,true);
+secs.forEach(function(s,k){if(k)doc.addPage();im(LG.l1,false);im(LG.l2,true);
 doc.setFont('helvetica','bold');doc.setFontSize(13);doc.text(s.m.t1,W/2,14,{align:'center'});doc.setFontSize(11);doc.text(s.m.t2,W/2,20,{align:'center'});
-if(!s.list.length){doc.setFont('helvetica','normal');doc.setFontSize(9);doc.text('Tiada rekod.',W/2,34,{align:'center'});return}
-doc.autoTable({startY:27,theme:'grid',head:[cols.map(function(c){return c[0]})],body:s.list.map(function(r,i){return cols.map(function(c){return String(cell(r,c,i))})}),styles:{fontSize:cols.length>22?4.8:(cols.length>17?5.5:6.5),cellPadding:1.2},headStyles:{fillColor:[31,58,95]},margin:{left:10,right:10,bottom:14}})});
+var y=27;
+s.blocks.forEach(function(b){
+if(!b.persons.length){doc.setFont('helvetica','normal');doc.setFontSize(9);doc.text('Tiada rekod.',W/2,y+7,{align:'center'});return}
+if(y>H-40){doc.addPage();y=14}
+if(b.title){doc.setFont('helvetica','bold');doc.setFontSize(9);doc.text(b.title,10,y+3);y+=6}
+var body=[];b.persons.forEach(function(r,i){var it=b.items?b.items(r):[null],n=Math.max(1,it.length);
+for(var j=0;j<n;j++){var row=[];b.cols.forEach(function(c){if(c.s){if(j===0){var v=String(c.f(r,null,i));row.push(n>1?{content:v,rowSpan:n}:v)}}else row.push(String(c.f(r,it[j],i)))});body.push(row)}});
+var nc=b.cols.length,fs=b.items?7:(nc>17?5.6:(nc>12?6.5:7));
+doc.autoTable({startY:y,theme:'grid',head:[b.cols.map(function(c){return c.h})],body:body,styles:{fontSize:fs,cellPadding:1.3,valign:'top'},headStyles:{fillColor:[31,58,95]},margin:{left:10,right:10,bottom:14}});
+y=doc.lastAutoTable.finalY+8})});
 var np=doc.internal.getNumberOfPages();doc.setFont('helvetica','normal');doc.setFontSize(6);for(var k=1;k<=np;k++){doc.setPage(k);doc.text(secs[0].m.t3,10,H-6)}
 return doc.output('blob')}
-async function mkXls(secs){var wb=new window.ExcelJS.Workbook();
-secs.forEach(function(s){var list=s.list,m=s.m,cols=colsFor(list),n=cols.length,ws=wb.addWorksheet(s.name);
-[m.t1,m.t2].forEach(function(t,i){ws.mergeCells(i+1,1,i+1,n);var c=ws.getCell(i+1,1);c.value=t;c.alignment={horizontal:'center',vertical:'middle'};c.font={bold:true,size:i===0?14:12}});
+async function mkXls(secs){var wb=new window.ExcelJS.Workbook(),used={};
+function nm(x){x=String(x).replace(/[\[\]:*?\/\\]/g,' ').slice(0,31);var k=x,i=2;while(used[k.toLowerCase()]){k=x.slice(0,28)+' '+i;i++}used[k.toLowerCase()]=1;return k}
+var bd={top:{style:'thin'},left:{style:'thin'},bottom:{style:'thin'},right:{style:'thin'}};
+secs.forEach(function(s){s.blocks.forEach(function(b){var cols=b.cols,n=cols.length,ws=wb.addWorksheet(nm(s.name+b.sfx));
+[s.m.t1,s.m.t2].forEach(function(t,i){ws.mergeCells(i+1,1,i+1,n);var c=ws.getCell(i+1,1);c.value=t;c.alignment={horizontal:'center',vertical:'middle'};c.font={bold:true,size:i===0?14:12}});
 ws.getRow(1).height=30;ws.getRow(2).height=22;ws.getRow(3).height=18;
+if(b.title){ws.mergeCells(3,1,3,n);var tc=ws.getCell(3,1);tc.value=b.title;tc.font={bold:true,size:11};tc.alignment={horizontal:'left',vertical:'middle'}}
 [[LG.l1,0],[LG.l2,n-1]].forEach(function(a){if(!a[0])return;var id=wb.addImage({base64:a[0],extension:/^data:image\/png/.test(a[0])?'png':'jpeg'});ws.addImage(id,{tl:{col:a[1],row:0},ext:{width:64,height:64}})});
-cols.forEach(function(c,i){ws.getColumn(i+1).width=wd(i)||20});
-ws.getRow(5).values=cols.map(function(c){return c[0]});
-list.forEach(function(r,i){ws.getRow(6+i).values=cols.map(function(c){return cell(r,c,i)})});
-ws.eachRow(function(row,ri){if(ri<5)return;row.eachCell(function(c){c.border={top:{style:'thin'},left:{style:'thin'},bottom:{style:'thin'},right:{style:'thin'}};c.alignment={vertical:'top',wrapText:true};if(ri===5){c.font={bold:true,color:{argb:'FFFFFFFF'}};c.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF1F3A5F'}}}})});
-var fr=ws.getCell(7+list.length,1);fr.value=m.t3;fr.font={size:8,italic:true,color:{argb:'FF666666'}}});
+cols.forEach(function(c,i){ws.getColumn(i+1).width=c.w||16});
+try{ws.pageSetup={paperSize:9,orientation:'landscape',fitToPage:true,fitToWidth:1,fitToHeight:0,printTitlesRow:'5:5'}}catch(e){}
+cols.forEach(function(c,ci){ws.getCell(5,ci+1).value=c.h});
+var r0=6,spans=[];
+if(!b.persons.length){ws.getCell(6,1).value='Tiada rekod.';r0=7}
+b.persons.forEach(function(r,i){var it=b.items?b.items(r):[null],k=Math.max(1,it.length);
+for(var j=0;j<k;j++)cols.forEach(function(c,ci){if(c.s){if(j===0)ws.getCell(r0,ci+1).value=c.f(r,null,i)}else ws.getCell(r0+j,ci+1).value=c.f(r,it[j],i)});
+if(k>1)cols.forEach(function(c,ci){if(c.s)spans.push([r0,ci+1,r0+k-1,ci+1])});r0+=k});
+var last=b.persons.length?r0-1:6;
+for(var rr=5;rr<=last;rr++)for(var cx=1;cx<=n;cx++){var cl=ws.getCell(rr,cx);cl.border=bd;cl.alignment={vertical:'top',wrapText:true};if(rr===5){cl.font={bold:true,color:{argb:'FFFFFFFF'}};cl.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF1F3A5F'}}}}
+spans.forEach(function(sp){ws.mergeCells(sp[0],sp[1],sp[2],sp[3])});
+var fr=ws.getCell(last+2,1);fr.value=s.m.t3;fr.font={size:8,italic:true,color:{argb:'FF666666'}}})});
 return new Blob([await wb.xlsx.writeBuffer()],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'})}
-async function out(kind){var s=$('xs'),mode=$('xmode').value,all=mode==='all';
-var secs=(all?C.tabs:C.tabs.filter(function(t){return t[0]===mode})).map(function(t){return{name:t[1],list:getList(t[0],false),m:meta(t[0])}});
+async function out(kind){var s=$('xs'),mode=$('xmode').value,all=mode==='all',secs=[];
+(all?C.tabs:C.tabs.filter(function(t){return t[0]===mode})).forEach(function(t){var L=getList(t[0],false);secs.push({name:t[1],list:L,m:meta(t[0]),blocks:blocksFor(t[0],L)})});
 if(!secs.some(function(x){return x.list.length})){s.textContent='Tiada rekod untuk dimuat turun.';return}
 s.textContent='Menyediakan fail...';
 try{if(kind==='pdf'?!(window.jspdf&&window.jspdf.jsPDF):!window.ExcelJS)throw {code:'lib'};
@@ -393,7 +454,7 @@ var CFG=(window.SLN_FB&&window.SLN_FB.apiKey&&window.SLN_FB.projectId)?window.SL
 try{RCM=JSON.parse(localStorage.getItem(RCK)||'{}')}catch(e){RCM={}}
 function saveRC(){try{localStorage.setItem(RCK,JSON.stringify(RCM))}catch(e){}}
 function kick(){if(!CFG||!AUTH)return;clearTimeout(kt);kt=setTimeout(function(){syncNow()},1500)}
-function setSyn(t){$('who').textContent=t+' (v2.2)'}
+function setSyn(t){$('who').textContent=t+' (v2.4)'}
 function fbBase(){return 'https://firestore.googleapis.com/v1/projects/'+CFG.projectId+'/databases/(default)/documents'}
 function loadAuth(){try{AUTH=JSON.parse(localStorage.getItem(AK)||'null')}catch(e){AUTH=null}}
 function saveAuth(){try{if(AUTH)localStorage.setItem(AK,JSON.stringify(AUTH));else localStorage.removeItem(AK)}catch(e){}}
