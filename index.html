@@ -20,6 +20,8 @@ h1{font-size:1.25rem;margin:4px 0 8px;letter-spacing:.2px}
 .tabs button.on{color:var(--ac);border-bottom-color:var(--ac);font-weight:600}
 .tabs.sub button{padding:7px 10px;font-size:.92rem}
 .bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.sum{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px}.sum button{border:1px solid var(--bd,#cbd5e1);background:transparent;color:inherit;border-radius:99px;padding:3px 11px;font:inherit;font-size:.85rem;cursor:pointer}.sum button.on{outline:2px solid currentColor}.sum .nb{border-color:transparent;background:var(--wnb);color:var(--wn)}.sum .nd{border-color:transparent;background:var(--dgb);color:var(--dg)}.sum b{font-variant-numeric:tabular-nums}
+#tst{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);margin:0;border:0;border-radius:10px;padding:10px 14px;background:#1f2937;color:#fff;max-width:92vw;inset:auto auto 18px 50%;display:none;gap:12px;align-items:center}#tst:popover-open,#tst.show{display:flex}#tst button{background:transparent;border:1px solid #fff;color:#fff;border-radius:8px;padding:3px 10px;font:inherit;cursor:pointer}
 .bar input,.bar select{flex:1 1 180px}
 input,select{font:inherit;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:8px 10px;min-height:40px;width:100%}
 input[readonly]{background:var(--bg);color:var(--mu)}
@@ -84,7 +86,7 @@ tbody td.empty{display:block!important;grid-column:1/-1;background:var(--card);b
 <section id="lk" hidden><h2>Aplikasi dikunci</h2><label>Masukkan PIN<input id="lpin" type="password" inputmode="numeric" autocomplete="off" maxlength="8"></label><div class="err" id="lerr" role="alert"></div><button class="pri" id="lgo">Buka</button><button class="sec" id="lforgot">Lupa PIN</button></section>
 <div class="wrap" id="app">
 <h1>Sistem Seliaan ODP dan OBB</h1>
-<div class="ub"><span id="who">Data disimpan dalam peranti ini sahaja. (v2.6)</span><button class="sec" id="bsync" hidden>Selaras</button><button class="sec" id="bdata">Data dan PIN</button><button class="sec" id="blout" hidden>Log keluar</button></div>
+<div class="ub"><span id="who">Data disimpan dalam peranti ini sahaja. (v2.7)</span><button class="sec" id="bsync" hidden>Selaras</button><button class="sec" id="bdata">Data dan PIN</button><button class="sec" id="blout" hidden>Log keluar</button></div>
 <div class="tabs" id="main"><button class="on" data-m="odp">ODP</button><button data-m="obb">OBB</button></div>
 <section id="odp">
 <div class="tabs sub" id="sub"><button class="on" data-s="semasa">Seliaan semasa <span id="c1"></span></button><button data-s="gantung">Digantung / dibatalkan <span id="c3"></span></button><button data-s="bebas">Telah dibebaskan <span id="c2"></span></button><button data-s="pindah">Berpindah <span id="c4"></span></button></div>
@@ -94,6 +96,7 @@ tbody td.empty{display:block!important;grid-column:1/-1;background:var(--card);b
 <select id="kat" aria-label="Kategori OBB" hidden><option value="">Semua kategori</option><option>Biasa</option><option>Fast Track</option></select>
 <button class="pri" id="add">Tambah ODP</button>
 </div>
+<div class="sum" id="sum"></div>
 <div class="yrs" id="yrs"></div>
 <details class="rep"><summary>Jana laporan PDF / Excel</summary><div class="bar" style="margin-top:8px"><select id="xmode" aria-label="Skop laporan"><option value="all">Semua senarai (Semasa, Gantung/Batal, Bebas)</option><option value="semasa">ODP Seliaan Semasa sahaja</option><option value="gantung">ODP Gantung / Batal Perintah sahaja</option><option value="bebas">ODP Tamat / Bebas sahaja</option><option value="pindah">Berpindah sahaja</option></select><select id="xloc" aria-label="Lokasi ODP / OBB"><option value="">Semua lokasi</option><option value="keluarga">Keluarga sahaja</option><option value="majikan">Semua majikan</option><option value="tertentu">Majikan tertentu</option></select><input id="xlname" list="xlist" placeholder="Nama majikan (cth: Farley)" autocomplete="off" hidden><datalist id="xlist"></datalist><label style="display:flex;gap:8px;align-items:center;flex:1 1 100%;font-size:.9rem;color:var(--mu)"><input type="checkbox" id="xsplit" style="width:auto;flex:none;min-height:0"> Asingkan jadual Majikan dan Keluarga</label><button class="sec" id="xpdf">Muat turun PDF</button><button class="sec" id="xxls">Muat turun Excel</button></div><p class="hint" id="xs" role="status">Laporan mengikut pejabat yang dipilih. Pilih Semua senarai atau satu senarai sahaja. Bagi Semua senarai, Excel mempunyai satu helaian dan PDF satu bahagian untuk setiap senarai.</p></details>
 <div class="scroll"><table><thead><tr><th>Bil.</th><th>Nama</th><th class="n">No. KP</th><th>No. SMPP</th><th>Pekerjaan</th><th>Pejabat</th><th class="n">Tarikh tamat</th><th>Baki</th></tr></thead><tbody id="tb"></tbody></table></div>
@@ -168,8 +171,14 @@ tbody td.empty{display:block!important;grid-column:1/-1;background:var(--card);b
 <input type="file" id="dfile" accept=".json,application/json,text/plain" hidden>
 <div class="hint" id="dmsg" role="status" style="margin:0"></div><hr>
 <div class="row"><button type="button" class="sec" id="dpin">Tetapkan atau tukar PIN</button><button type="button" class="sec" id="dpinoff">Buang PIN</button></div>
-<div class="row"><button type="button" class="sec" id="dhol">Senarai cuti umum</button></div>
+<div class="row"><button type="button" class="sec" id="dhol">Senarai cuti umum</button><button type="button" class="sec" id="dtrash">Rekod dipadam</button></div>
+<label>Kunci automatik apabila tiada aktiviti (perlu PIN)<select id="didle"><option value="1">1 minit</option><option value="2">2 minit</option><option value="5">5 minit</option><option value="10">10 minit</option><option value="15">15 minit</option></select></label>
+<div class="hint" id="dback" style="margin:0"></div>
+<div class="hint" style="margin:0">Katakunci bersama: tukar apabila ada pegawai berpindah atau keluar, atau jika disyaki bocor. Langkahnya ada dalam PANDUAN-FIREBASE.txt. Selepas ditukar, setiap peranti perlu log masuk semula.</div>
+<label>Tarikh katakunci bersama terakhir ditukar (nota pada peranti ini sahaja)<input id="dpwd" type="date"></label>
 </div><div class="df"><button type="button" class="sec" id="dclose">Tutup</button></div></dialog>
+<div id="tst" popover="manual" role="status"><span id="tmsg"></span><button type="button" id="tundo">Batal</button></div>
+<dialog id="tdlg"><div class="dh">Rekod dipadam baru-baru ini</div><div class="dbody"><p class="hint" style="margin:0">Rekod yang dipadam boleh dipulihkan di sini. Selepas dipulihkan ia kembali ke senarai asal dan diselaraskan ke peranti lain.</p><div id="tlist"></div></div><div class="df"><button type="button" class="sec" id="tclose">Tutup</button></div></dialog>
 <dialog id="hdlg"><div class="dh">Senarai cuti umum</div><div class="dbody">
 <p class="hint" style="margin:0">Sabtu dan Ahad dikira secara automatik. Tambah cuti umum Isnin hingga Jumaat yang berkuat kuasa di Sarawak, termasuk cuti gantian dan cuti peristiwa khas yang diumumkan. Rujuk kalendar rasmi. Jika tarikh tamat jatuh pada hujung minggu atau cuti umum, pembebasan dibuat pada hari bekerja sebelumnya.</p>
 <div class="row"><input id="hdate" type="date" style="flex:1 1 150px"><input id="hname" placeholder="Nama cuti (contoh: Hari Gawai)" style="flex:2 1 180px"><button type="button" class="pri" id="hadd">Tambah</button></div>
@@ -222,10 +231,10 @@ var $=function(id){return document.getElementById(id)};
 
 function render(){drawYears();fillLok();
 var q=$("q").value.trim().toLowerCase(),off=$("off").value;
-var hd=$("tb").parentNode.tHead.rows[0].cells,pd=tab==="pindah";hd[5].textContent=pd?"Lokasi baharu":"Pejabat";hd[6].textContent=pd?"Tarikh kuatkuasa":"Tarikh tamat";hd[7].textContent=pd?"Status":"Baki";var cnt={semasa:0,gantung:0,bebas:0,pindah:0};rows.forEach(function(r){if(inScope(r))cnt[st(r)]++});
+drawSum();var hd=$("tb").parentNode.tHead.rows[0].cells,pd=tab==="pindah";hd[5].textContent=pd?"Lokasi baharu":"Pejabat";hd[6].textContent=pd?"Tarikh kuatkuasa":"Tarikh tamat";hd[7].textContent=pd?"Status":"Baki";var cnt={semasa:0,gantung:0,bebas:0,pindah:0};rows.forEach(function(r){if(inScope(r))cnt[st(r)]++});
 $("c1").textContent="("+cnt.semasa+")";$("c3").textContent="("+cnt.gantung+")";$("c2").textContent="("+cnt.bebas+")";$("c4").textContent="("+cnt.pindah+")";
 var list=rows.filter(function(r){return st(r)===tab&&inScope(r)}).filter(function(r){
-return(!off||r.pejabat===off)&&(!q||[r.nama,r.kp,r.smpp].join(" ").toLowerCase().indexOf(q)>-1)});
+return(!off||r.pejabat===off)&&(!UW||tab!=="semasa"||days(today,efTamat(r))<=UW)&&(!q||[r.nama,r.kp,r.smpp].join(" ").toLowerCase().indexOf(q)>-1)});
 list.sort(function(a,b){return a.tamat<b.tamat?(tab==="semasa"?-1:1):a.tamat>b.tamat?(tab==="semasa"?1:-1):0});
 if(!list.length){$("tb").innerHTML='<tr><td colspan="8" class="empty">Tiada rekod. Tekan Tambah '+C.name+' untuk memasukkan rekod pertama.</td></tr>';return}
 $("tb").innerHTML=list.map(function(r,i){
@@ -266,6 +275,7 @@ $("pl").hidden=!r;$("pmsg").textContent="";clearP();if(r)drawPel(r);calc();$("qd
 $("f").addEventListener("submit",function(ev){
 ev.preventDefault();
 var o={};F.forEach(function(f){o[f[0]]=el(f[0]).value.trim()});
+if(/^\d{12}$/.test(o.kp))o.kp=o.kp.slice(0,6)+'-'+o.kp.slice(6,8)+'-'+o.kp.slice(8);
 var m="";
 if(!o.nama)m="Isi nama "+C.name+".";
 else if(!/^\d{6}-\d{2}-\d{4}$/.test(o.kp))m="No. KP mesti dalam format 000000-00-0000.";
@@ -274,6 +284,13 @@ else if(!o.mula||!o.tamat)m="Isi tarikh mula dan tarikh tamat.";
 else if(o.tamat<o.mula)m="Tarikh tamat mesti selepas tarikh mula.";
 else if(!o.pejabat)m="Pilih pejabat pemantau.";
 if(m){$("err").textContent=m;return}
+var wn=[],km=+o.kp.slice(2,4),kd=+o.kp.slice(4,6),td=days(o.mula,o.tamat)+1;
+if(km<1||km>12||kd<1||kd>31)wn.push('Bulan/hari dalam No. KP nampak tidak sah ('+o.kp+').');
+if(td>1830)wn.push('Tempoh '+td+' hari (lebih 5 tahun). Semak tarikh mula dan tamat.');
+if(o.mula.slice(0,4)<'2000'||o.tamat.slice(0,4)>'2099'||o.mula>plus(366))wn.push('Tarikh mula atau tamat nampak luar biasa ('+dmy(o.mula)+' hingga '+dmy(o.tamat)+').');
+if(!editId&&o.tamat<today)wn.push('Tarikh tamat sudah lepas, rekod ini akan terus masuk senarai Telah dibebaskan.');
+if(wn.length&&!confirm('Sila semak:\n\n- '+wn.join('\n- ')+'\n\nSimpan juga?'))return;
+$("err").textContent="";
 o.tempoh=days(o.mula,o.tamat);o.ru=NOW();
 if(editId){rows=rows.map(function(r){return r.id===editId?Object.assign({},r,o):r})}
 else{var tb=rows.filter(function(r){return r.kp===o.kp&&r.del})[0];if(tb){Object.assign(tb,o,{del:""})}else{o.id=rows.reduce(function(a,r){return Math.max(a,r.id)},0)+1;o.pel=[];rows.push(o)}}
@@ -293,8 +310,24 @@ document.querySelector(".dh2").textContent=C.pt;
 ["jenis","tarikh","tempat","nama","gantung","batal"].forEach(function(k){$("p"+k).parentNode.firstChild.nodeValue=C.pl[k]})}
 $("main").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;
 [].forEach.call($("main").children,function(x){x.classList.toggle("on",x===b)});
-C=MODS[b.dataset.m];F=C.F;rows=DB[C.key]||(DB[C.key]=load());tab="semasa";KT="";$("kat").value="";$("q").value="";$("xs").textContent="";skin();render()});
+UW=0;C=MODS[b.dataset.m];F=C.F;rows=DB[C.key]||(DB[C.key]=load());tab="semasa";KT="";$("kat").value="";$("q").value="";$("xs").textContent="";skin();render()});
 var pe=null;
+
+var UW=0,TT=null,TU=null,BK='seliaan-lastbackup',PWK='seliaan-pwdate',IDK='seliaan-idle';
+function lsGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function lsSet(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+function backDays(){var t=lsGet(BK);if(!t)return null;return Math.floor((Date.now()-new Date(t).getTime())/864e5)}
+function drawSum(){var el0=$('sum');if(!el0)return;var a=0,w7=0,w14=0,w30=0,bm=0,pv=0,mo=today.slice(0,7);
+rows.forEach(function(r){if(!inScope(r))return;var s=st(r);if(s==='semasa'){a++;var b=days(today,efTamat(r));if(b<=7)w7++;if(b<=14)w14++;if(b<=30)w30++;if((r.pel||[]).length)pv++}
+else if(s==='bebas'){var d=(r.bb&&r.bb.t)?r.bb.t:efTamat(r);if(d&&d.slice(0,7)===mo)bm++}});
+var h='<span class="pill p-ok">Seliaan semasa <b>'+a+'</b></span>';
+[[7,w7,'nd'],[14,w14,'nb'],[30,w30,'']].forEach(function(x){h+='<button type="button" class="'+x[2]+(UW===x[0]?' on':'')+'" data-uw="'+x[0]+'">Tamat dalam '+x[0]+' hari: <b>'+x[1]+'</b></button>'});
+h+='<span class="pill p-ok">Bebas bulan ini <b>'+bm+'</b></span>';if(pv)h+='<span class="pill p-wn">Pelanggaran belum diputuskan <b>'+pv+'</b></span>';
+var bd=backDays();if(rows.length){if(bd===null||bd>=14)h+='<button type="button" class="nb" data-go="back">'+(bd===null?'Belum ada sandaran':'Sandaran terakhir '+bd+' hari lalu')+' - ketik untuk eksport</button>';
+if(!pinCfg())h+='<button type="button" class="nb" data-go="pin">PIN belum ditetapkan - ketik untuk tetapkan</button>'}
+el0.innerHTML=h}
+function toast(msg,undo){var t=$('tst');$('tmsg').textContent=msg;TU=undo;clearTimeout(TT);try{t.showPopover&&t.showPopover()}catch(e){}t.classList.add('show');TT=setTimeout(hideToast,10000)}
+function hideToast(){var t=$('tst');try{t.hidePopover&&t.hidePopover()}catch(e){}t.classList.remove('show');TU=null}
 function st(r){if(r.del)return"del";if(r.bb&&r.bb.t)return"bebas";var g=(r.pel||[]).some(function(p){return C.mv.some(function(k){return p[k]})})||(r.pbl||[]).some(function(q){return q.kuat});return g?'gantung':(movedItem(r)?'pindah':(autoBebas(r)?'bebas':'semasa'))}
 function curRow(){return rows.filter(function(x){return x.id===editId})[0]}
 function clearP(){pe=null;['pjenis','ptarikh','ptempat','pnama','pgantung','pbatal'].forEach(function(k){$(k).value=''})}
@@ -417,8 +450,8 @@ catch(e){s.textContent=e&&e.code==='declined'?'Muat turun dibatalkan.':(e&&e.cod
 $('xpdf').addEventListener('click',function(){out('pdf')});$('xxls').addEventListener('click',function(){out('xls')});
 skin();render();
 $("del").addEventListener("click",function(){var r=curRow();if(!r)return;
-if(!confirm('Padam rekod "'+r.nama+'"?\n\nRekod akan hilang daripada senarai dan laporan, dan turut dipadam pada peranti lain selepas fail dikongsi dan diimport.\n\nJika orang ini sebenarnya sudah bebas, JANGAN padam. Kemas kini tarikh tamat supaya ia berpindah ke senarai Telah dibebaskan.'))return;
-r.del=NOW();r.ru=NOW();save();$("dlg").close();render()});
+if(!confirm('Padam rekod "'+r.nama+'"?\n\nRekod akan hilang daripada senarai dan laporan, dan turut dipadam pada peranti lain. Anda boleh memulihkannya melalui Data dan keselamatan, Rekod dipadam.\n\nJika orang ini sebenarnya sudah bebas, JANGAN padam. Kemas kini tarikh tamat supaya ia berpindah ke senarai Telah dibebaskan.'))return;
+r.del=NOW();r.ru=NOW();save();$("dlg").close();render();var rid=r.id;toast('Rekod dipadam.',function(){var x=rows.filter(function(z){return z.id===rid})[0];if(x){x.del='';x.ru=NOW();save();render()}})});
 var pe2=null;
 function movedItem(r){var b=null;(r.pdh||[]).forEach(function(q){if(q.jenis==='keluar'&&q.lokasi&&q.lulus&&q.lulus<=today&&(!b||q.lulus>b.lulus))b=q});return b}
 function pendPd(r){return (r.pdh||[]).some(function(q){return !q.lulus||q.lulus>today})}
@@ -457,7 +490,7 @@ var CFG=(window.SLN_FB&&window.SLN_FB.apiKey&&window.SLN_FB.projectId)?window.SL
 try{RCM=JSON.parse(localStorage.getItem(RCK)||'{}')}catch(e){RCM={}}
 function saveRC(){try{localStorage.setItem(RCK,JSON.stringify(RCM))}catch(e){}}
 function kick(){if(!CFG||!AUTH)return;clearTimeout(kt);kt=setTimeout(function(){syncNow()},1500)}
-function setSyn(t){$('who').textContent=t+' (v2.6)'}
+function setSyn(t){$('who').textContent=t+' (v2.7)'}
 function fbBase(){return 'https://firestore.googleapis.com/v1/projects/'+CFG.projectId+'/databases/(default)/documents'}
 function loadAuth(){try{AUTH=JSON.parse(localStorage.getItem(AK)||'null')}catch(e){AUTH=null}}
 function saveAuth(){try{if(AUTH)localStorage.setItem(AK,JSON.stringify(AUTH));else localStorage.removeItem(AK)}catch(e){}}
@@ -548,10 +581,11 @@ $('bbgo').addEventListener('click',function(){$('bbk').scrollIntoView({behavior:
 $('bbk').addEventListener('keydown',function(e){if(e.key==='Enter')e.preventDefault()});
 function tick(){var t=fmt(new Date()),n=new Date().getHours()>=12;if(t!==today||n!==NOONF){today=t;NOONF=n;render()}}
 setInterval(tick,60000);document.addEventListener('visibilitychange',function(){if(!document.hidden)tick()});
-function delItem(r,key,i){var p=(r[key]||[])[i];if(!p)return;r.dt=(r.dt||[]).filter(function(t){return t.pid!==p.pid});r.dt.push({pid:p.pid,u:NOW()});r[key].splice(i,1);save()}
-$('plist').addEventListener('click',function(e){var b=e.target.closest('button[data-pd]');if(!b)return;var r=curRow(),i=+b.dataset.pd;if(!confirm('Padam pelanggaran ini? Tindakan ini tidak boleh dibatalkan.'))return;delItem(r,'pel',i);if(pe===i)clearP();else if(pe!==null&&pe>i)pe--;drawPel(r);render();$('pmsg').textContent='Pelanggaran dipadam.'});
-$('qlist').addEventListener('click',function(e){var b=e.target.closest('button[data-qd]');if(!b)return;var r=curRow(),i=+b.dataset.qd;if(!confirm('Padam permohonan ini? Tindakan ini tidak boleh dibatalkan.'))return;delItem(r,'pdh',i);if(pe2===i)clearQ();else if(pe2!==null&&pe2>i)pe2--;drawQ(r);render();$('qmsg').textContent='Permohonan dipadam.'});
-$('blist').addEventListener('click',function(e){var b=e.target.closest('button[data-bd]');if(!b)return;var r=curRow(),i=+b.dataset.bd;if(!confirm('Padam panggil balik ini? Tindakan ini tidak boleh dibatalkan.'))return;delItem(r,'pbl',i);if(pe3===i)clearB();else if(pe3!==null&&pe3>i)pe3--;drawB(r);render();$('bmsg').textContent='Panggil balik dipadam.'});
+function delItem(r,key,i){var p=(r[key]||[])[i];if(!p)return;r.dt=(r.dt||[]).filter(function(t){return t.pid!==p.pid});r.dt.push({pid:p.pid,u:NOW()});r[key].splice(i,1);save();
+var back=JSON.parse(JSON.stringify(p));toast('Entri dipadam.',function(){var rr=rows.filter(function(x){return x.id===r.id})[0];if(!rr)return;back.u=NOW();rr[key]=rr[key]||[];rr[key].push(back);save();if(editId===rr.id){({pel:drawPel,pdh:drawQ,pbl:drawB})[key](rr)}render()})}
+$('plist').addEventListener('click',function(e){var b=e.target.closest('button[data-pd]');if(!b)return;var r=curRow(),i=+b.dataset.pd;if(!confirm('Padam pelanggaran ini? Anda boleh membatalkannya dalam 10 saat.'))return;delItem(r,'pel',i);if(pe===i)clearP();else if(pe!==null&&pe>i)pe--;drawPel(r);render();$('pmsg').textContent='Pelanggaran dipadam.'});
+$('qlist').addEventListener('click',function(e){var b=e.target.closest('button[data-qd]');if(!b)return;var r=curRow(),i=+b.dataset.qd;if(!confirm('Padam permohonan ini? Anda boleh membatalkannya dalam 10 saat.'))return;delItem(r,'pdh',i);if(pe2===i)clearQ();else if(pe2!==null&&pe2>i)pe2--;drawQ(r);render();$('qmsg').textContent='Permohonan dipadam.'});
+$('blist').addEventListener('click',function(e){var b=e.target.closest('button[data-bd]');if(!b)return;var r=curRow(),i=+b.dataset.bd;if(!confirm('Padam panggil balik ini? Anda boleh membatalkannya dalam 10 saat.'))return;delItem(r,'pbl',i);if(pe3===i)clearB();else if(pe3!==null&&pe3>i)pe3--;drawB(r);render();$('bmsg').textContent='Panggil balik dipadam.'});
 var LK='',LN='',LS=false;
 function alamatInfo(r){var b=null;(r.pdh||[]).forEach(function(q){if(q.alamat&&q.lulus&&q.lulus<=today&&(!b||q.lulus>=b.lulus))b=q});return{a:b?b.alamat:(r.alamat||''),j:b?(b.jenisA||r.jenisAlamat):r.jenisAlamat}}
 function locOK(r){if(!LK)return true;var o=alamatInfo(r);if(LK==='keluarga')return o.j==='Keluarga';if(LK==='majikan')return o.j==='Majikan';return o.j==='Majikan'&&(!LN||String(o.a).toLowerCase().indexOf(LN.toLowerCase())>-1)}
@@ -594,9 +628,9 @@ if(o.app!=='seliaan-odp-obb')throw new Error('Fail ini bukan sandaran sistem ini
 async function doExport(){var m=$('dmsg');try{
 if(!(window.crypto&&crypto.subtle)&&$('dpw').value)throw new Error('Penyulitan tidak disokong dalam pelayar ini.');
 var d=allData(),txt=await seal({app:'seliaan-odp-obb',v:1,exportedAt:NOW(),odp:d.odp,obb:d.obb,cuti:holList()},$('dpw').value),name='seliaan-'+today+'.json',f=new File([txt],name,{type:'application/json'});
-if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],title:'Data seliaan'});m.textContent='Fail dikongsi. Penerima memilih Import dan gabung.';return}catch(e){if(e&&e.name==='AbortError')return}}
+if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],title:'Data seliaan'});lsSet(BK,NOW());m.textContent='Fail dikongsi. Penerima memilih Import dan gabung.';showBack();render();return}catch(e){if(e&&e.name==='AbortError')return}}
 var a=document.createElement('a');a.href=URL.createObjectURL(f);a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},1500);
-m.textContent='Fail dimuat turun. Hantar fail itu melalui WhatsApp.'+($('dpw').value?'':' Amaran: fail tidak disulitkan.')}catch(e){m.textContent=e.message}}
+lsSet(BK,NOW());showBack();render();m.textContent='Fail dimuat turun. Hantar fail itu melalui WhatsApp.'+($('dpw').value?'':' Amaran: fail tidak disulitkan.')}catch(e){m.textContent=e.message}}
 $('dexp').addEventListener('click',doExport);
 $('dimp').addEventListener('click',function(){$('dfile').value='';$('dfile').click()});
 $('dfile').addEventListener('change',async function(){var m=$('dmsg'),f=this.files[0];if(!f)return;
@@ -620,7 +654,25 @@ if(prompt('Masukkan PIN sekali lagi:')!==p){m.textContent='PIN tidak sepadan.';r
 var s=b64(crypto.getRandomValues(new Uint8Array(16)));localStorage.setItem(PINK,JSON.stringify({s:s,h:await pinHash(p,s)}));m.textContent='PIN ditetapkan. Aplikasi akan dikunci apabila dibuka semula.'});
 $('dpinoff').addEventListener('click',async function(){var m=$('dmsg'),c=pinCfg();if(!c){m.textContent='Tiada PIN ditetapkan.';return}
 var p=prompt('Masukkan PIN semasa untuk membuangnya:');if(p===null)return;if(await pinHash(p,c.s)===c.h){localStorage.removeItem(PINK);m.textContent='PIN dibuang.'}else m.textContent='PIN tidak betul.'});
-document.addEventListener('visibilitychange',function(){if(document.hidden)hiddenAt=Date.now();else if(pinCfg()&&hiddenAt&&Date.now()-hiddenAt>120000)lockNow()});
+document.addEventListener('visibilitychange',function(){if(document.hidden)hiddenAt=Date.now();else if(pinCfg()&&hiddenAt&&Date.now()-hiddenAt>Math.min(120000,idleMin()*60000))lockNow()});
+
+function showBack(){var d=backDays();$('dback').textContent=d===null?'Sandaran: belum pernah dieksport daripada peranti ini. Eksport fail sandaran dan simpan di tempat berasingan.':'Sandaran terakhir dieksport '+(d===0?'hari ini':d+' hari lalu')+'.'}
+function idleMin(){var v=+lsGet(IDK);return [1,2,5,10,15].indexOf(v)>-1?v:5}
+var idleT=null;function idleReset(){clearTimeout(idleT);if(!pinCfg())return;idleT=setTimeout(function(){if(pinCfg()&&$('lk').hidden)lockNow()},idleMin()*60000)}
+['click','keydown','touchstart','scroll','mousemove'].forEach(function(ev){document.addEventListener(ev,idleReset,{passive:true,capture:true})});
+$('didle').addEventListener('change',function(){lsSet(IDK,this.value);idleReset();$('dmsg').textContent=pinCfg()?'Kunci automatik: '+this.value+' minit.':'Tetapkan PIN supaya kunci automatik berfungsi.'});
+$('dpwd').addEventListener('change',function(){lsSet(PWK,this.value);pwNote()});
+function pwNote(){var v=lsGet(PWK),n=$('dback').nextElementSibling;if(v&&n){var d=days(v,today);n.textContent='Katakunci bersama: tukar apabila ada pegawai berpindah atau keluar, atau jika disyaki bocor. Terakhir ditukar '+dmy(v)+' ('+d+' hari lalu).'+(d>180?' Pertimbangkan menukarnya.':'')+' Langkahnya ada dalam PANDUAN-FIREBASE.txt. Selepas ditukar, setiap peranti perlu log masuk semula.'}}
+$('bdata').addEventListener('click',function(){showBack();$('didle').value=String(idleMin());$('dpwd').value=lsGet(PWK)||'';pwNote()});
+$('sum').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;if(b.dataset.uw){var n=+b.dataset.uw;UW=UW===n?0:n;if(tab!=='semasa'){tab='semasa';[].forEach.call($('sub').children,function(x){x.classList.toggle('on',x.dataset.s==='semasa')})}render()}
+else if(b.dataset.go){$('dmsg').textContent='';showBack();$('didle').value=String(idleMin());$('dpwd').value=lsGet(PWK)||'';pwNote();$('ddlg').showModal()}});
+$('tundo').addEventListener('click',function(){var f=TU;hideToast();if(f)f()});
+function drawTrash(){var all=allData(),l=[];['odp','obb'].forEach(function(k){(all[k]||[]).forEach(function(r){if(r.del)l.push({k:k,r:r})})});l.sort(function(a,b){return a.r.del<b.r.del?1:-1});l=l.slice(0,50);
+$('tlist').innerHTML=l.length?l.map(function(x,i){return '<div class="pc"><span><b>'+esc(x.r.nama)+'</b> ('+x.k.toUpperCase()+')<br>'+esc(x.r.kp)+' | Dipadam '+dmy(fmt(new Date(x.r.del)))+'</span><span><button type="button" class="sec" data-tr="'+i+'">Pulihkan</button></span></div>'}).join(''):'<p class="hint">Tiada rekod dipadam.</p>';window.TRL=l}
+$('dtrash').addEventListener('click',function(){drawTrash();$('tdlg').showModal()});
+$('tclose').addEventListener('click',function(){$('tdlg').close()});
+$('tlist').addEventListener('click',function(e){var b=e.target.closest('button[data-tr]');if(!b)return;var x=window.TRL[+b.dataset.tr];if(!x)return;x.r.del='';x.r.ru=NOW();saveAll();kick();rows=DB[C.key];drawTrash();render()});
+idleReset();
 if('serviceWorker' in navigator&&/^https?:/.test(location.protocol))navigator.serviceWorker.register('sw.js').catch(function(){});
 loadAuth();if(pinCfg())lockNow();gate();if(CFG&&AUTH)syncNow(true);
 </script>

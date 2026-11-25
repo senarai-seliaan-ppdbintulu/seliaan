@@ -1,0 +1,114 @@
+PANDUAN SELARAS AWAN (FIREBASE PERCUMA)
+=======================================
+
+HASILNYA
+- Data ODP dan OBB yang sama pada hp, PC dan komputer riba, dikemas kini dalam kira-kira 1 minit.
+- Semua pegawai log masuk dengan satu ID dan katakunci yang ANDA cipta. Orang lain tidak boleh membaca data.
+- Sistem masih berfungsi tanpa internet. Perubahan disimpan dalam peranti dan diselaraskan apabila ada talian.
+- Percuma (pelan Spark): had harian 50,000 bacaan, 20,000 tulisan dan 1 GB simpanan, memadai untuk pejabat kecil.
+  Jika had dicapai, selaras berhenti sehingga hari berikutnya dan tiada bil dikenakan.
+
+PERHATIAN
+- Data akan disimpan pada pelayan Google (anda pilih lokasi Singapura). Semak peraturan jabatan sebelum memasukkan data sebenar.
+- Nama menu Firebase boleh berubah sedikit. Jika skrin anda berbeza, hantar tangkapan skrin kepada Claude.
+- Uji dahulu dengan data contoh (nama rekaan), kemudian barulah masukkan data sebenar.
+
+BAHAGIAN A: BUAT PROJEK FIREBASE (10 minit)
+ 1. Buka https://console.firebase.google.com dan log masuk dengan akaun Google.
+ 2. Klik "Create a project". Nama: seliaan-parol. Klik Continue.
+ 3. Matikan Google Analytics (butang togol), kemudian klik "Create project". Tunggu, kemudian klik Continue.
+
+BAHAGIAN B: HIDUPKAN LOG MASUK
+ 4. Menu kiri: Build > Authentication (atau Security > Authentication) > "Get started".
+ 5. Tab "Sign-in method" > "Email/Password" > hidupkan "Enable" > Save.
+
+BAHAGIAN C: BUAT PANGKALAN DATA
+ 6. Menu kiri: Build > "Firestore Database" > "Create database".
+ 7. Jika diminta memilih edisi, pilih "Standard edition".
+ 8. Location: pilih asia-southeast1 (Singapore). Klik Next.
+ 9. Pilih "Start in production mode". Klik Create.
+
+BAHAGIAN D: PASANG PERATURAN KESELAMATAN (PENTING)
+10. Dalam Firestore Database, buka tab "Rules".
+11. Padam semua teks di situ. Buka fail firestore.rules (pakej ini) dengan Notepad, salin semua teks, tampal dalam kotak Rules.
+12. Klik "Publish".
+    Peraturan ini membenarkan hanya pegawai yang anda daftarkan pada Bahagian G membaca atau menulis data.
+
+BAHAGIAN E: SALIN TETAPAN FIREBASE
+13. Klik ikon roda gigi di sebelah "Project Overview" > "Project settings" > tab "General".
+14. Tatal ke "Your apps" > klik ikon web "</>".
+15. App nickname: seliaan. JANGAN tandakan "Firebase Hosting". Klik "Register app".
+16. Dalam kotak kod, cari nilai "apiKey" dan "projectId". Salin kedua-duanya (tanpa tanda petikan).
+    Klik "Continue to console" untuk menutup.
+
+BAHAGIAN F: LETAKKAN TETAPAN DALAM SISTEM (GitHub)
+17. Dalam repositori seliaan di GitHub, klik fail firebase-config.js > ikon pensel (Edit this file).
+18. Isikan apiKey dan projectId di antara tanda petikan:
+      window.SLN_FB={apiKey:"AIza....",projectId:"seliaan-parol-xxxxx",domain:"seliaan.example.com"};
+    Klik "Commit changes".
+19. Muat naik juga index.html dan sw.js yang baharu (Add file > Upload files > Commit changes), supaya
+    menggantikan fail lama. Pastikan nama fail tepat index.html dan sw.js.
+20. Tunggu hingga 10 minit, kemudian buka sistem dan tutup, buka semula dua kali. Skrin Log masuk muncul.
+
+BAHAGIAN G: DAFTARKAN SATU AKAUN BERSAMA (SEKALI SAHAJA)
+21. Firebase > Authentication > tab "Users" > "Add user".
+    Email: seliaan@seliaan.example.com
+    Password: katakunci yang kukuh (disyorkan 10 aksara atau lebih). Klik "Add user".
+    E-mel ini tidak perlu wujud. Pegawai hanya menaip ID "seliaan" dan katakunci.
+22. Dalam senarai Users, salin nilai "User UID" akaun itu (lajur paling kanan).
+23. Firestore Database > tab "Data" > "Start collection". Collection ID: staff. Klik Next.
+      - Document ID: tampal User UID tadi (jangan guna "Auto-ID").
+      - Field: nama, Type: string, Value: Akaun bersama. Klik Save.
+24. Beri ID (seliaan) dan katakunci kepada setiap pegawai SECARA PERSENDIRIAN (bukan dalam kumpulan WhatsApp).
+    Pastikan setiap pegawai menetapkan PIN pada aplikasi dalam hp masing-masing.
+    (Jika mahu akaun berasingan bagi setiap orang atau pejabat, ulang langkah 21 hingga 23 dengan ID lain.)
+
+SELEPAS PEGAWAI LOG MASUK
+- Data yang sedia ada dalam peranti itu dihantar ke awan dan digabungkan. Disyorkan log masuk PERTAMA pada
+  peranti yang mempunyai data paling lengkap (contohnya PC pejabat), kemudian peranti lain.
+- Bar status di bawah tajuk menunjukkan "Selaras 10:32" jika berjaya. "Luar talian" bermakna tiada talian
+  atau selaras tertangguh; data selamat dalam peranti dan diselaraskan kemudian.
+- Butang "Selaras" menyelaras serta-merta. "Log keluar" tidak memadam data dalam peranti.
+
+MENGURUS AKSES
+- MENUKAR KATAKUNCI AKAUN BERSAMA (contohnya hp hilang atau pegawai bertukar). E-mel akaun ini tidak wujud, jadi
+  "Reset password" tidak berfungsi. Gunakan cara ini, dan semua sesi lama terhenti serta-merta:
+    1. Authentication > Users > tiga titik pada akaun itu > "Delete account".
+    2. "Add user" semula dengan e-mel yang sama dan katakunci baharu. Salin User UID yang baharu.
+    3. Firestore > koleksi "staff" > padam dokumen lama > "Add document" dengan Document ID = UID baharu dan field nama.
+    4. Beri katakunci baharu kepada semua pegawai. Mereka log masuk semula; data dalam peranti mereka tidak hilang.
+- MENUTUP AKSES SEMENTARA: padam dokumen dalam koleksi "staff" (akses terhenti serta-merta) dan tambah semula kemudian.
+
+PERKARA PENTING
+- Eksport sandaran daripada aplikasi (Data dan PIN > Eksport) sekurang-kurangnya seminggu sekali dan simpan di tempat selamat.
+- Padam rekod pada satu peranti turut sampai ke peranti lain selepas selaras.
+- Jika ada pegawai yang sudah mengguna versi lama, minta mereka membuka sistem dalam talian dua kali supaya dikemas kini.
+- Kunci API dalam firebase-config.js bukan rahsia, dan data hanya boleh dibaca oleh pegawai yang didaftarkan melalui peraturan
+  keselamatan. Pilihan tambahan: hadkan kunci API kepada laman anda di Google Cloud Console > APIs & Services > Credentials.
+
+MASALAH BIASA
+- "ID pengguna atau katakunci tidak betul": semak ejaan ID, dan pastikan e-mel pegawai ditambah dengan domain yang sama
+  seperti dalam firebase-config.js.
+- "Akses ditolak. Semak akaun anda": dokumen pegawai belum dibuat dalam koleksi "staff" atau Document ID bukan User UID.
+- Status kekal "Luar talian" walaupun ada internet: pastikan apiKey dan projectId betul, dan peraturan sudah di-Publish.
+  Hantar tangkapan skrin kepada Claude.
+
+
+================================================================
+MENUKAR KATAKUNCI BERSAMA (v2.7)
+================================================================
+Bila perlu tukar: apabila ada pegawai/anggota berpindah atau keluar, peranti hilang, atau katakunci disyaki bocor.
+
+Langkah (tidak boleh guna "Reset password" kerana e-mel sistem ini bukan e-mel sebenar):
+1. Buka console.firebase.google.com, pilih projek, Authentication, Users.
+2. Pada akaun seliaan@..., tekan tiga titik, pilih Delete account.
+3. Tekan Add user, guna e-mel yang SAMA dan katakunci baharu.
+4. Salin UID akaun baharu, kemudian dalam Firestore, koleksi "staff": tambah dokumen dengan ID = UID baharu itu (padam dokumen UID lama).
+5. Beritahu semua pegawai katakunci baharu. Setiap peranti akan diminta log masuk semula, dan data dalam peranti tidak hilang.
+6. Dalam aplikasi: Data dan keselamatan, isi "Tarikh katakunci bersama terakhir ditukar" sebagai peringatan (nota pada peranti itu sahaja).
+
+Lain-lain ciri v2.7:
+- Kunci automatik: tetapkan PIN, kemudian pilih masa tanpa aktiviti di Data dan keselamatan.
+- Sandaran: eksport fail sekurang-kurangnya sebulan sekali, simpan di tempat berasingan.
+- Laporan PDF/Excel luar talian: buka aplikasi sekali dalam keadaan ada internet (dua kali selepas kemas kini) supaya pustaka laporan disimpan dalam peranti.
+- Rekod dipadam boleh dipulihkan di Data dan keselamatan, Rekod dipadam. Padam entri pelanggaran boleh dibatalkan dalam 10 saat.
