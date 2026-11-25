@@ -112,3 +112,13 @@ Lain-lain ciri v2.7:
 - Sandaran: eksport fail sekurang-kurangnya sebulan sekali, simpan di tempat berasingan.
 - Laporan PDF/Excel luar talian: buka aplikasi sekali dalam keadaan ada internet (dua kali selepas kemas kini) supaya pustaka laporan disimpan dalam peranti.
 - Rekod dipadam boleh dipulihkan di Data dan keselamatan, Rekod dipadam. Padam entri pelanggaran boleh dibatalkan dalam 10 saat.
+
+
+================================================================
+KUOTA DAN KOS FIREBASE (v2.8)
+================================================================
+- Kekal pada pelan percuma "Spark". Jangan tekan Upgrade atau tambah kad bayaran. Selagi kekal Spark, tiada caj boleh dikenakan; jika had harian dicapai, penyelarasan terhenti sehingga hari berikutnya dan data dalam hp tidak hilang.
+- Semak penggunaan di console.firebase.google.com, Firestore Database, tab Usage. Untuk satu pejabat dengan beberapa ratus rekod, penggunaan biasanya jauh di bawah had percuma. Sahkan angka had semasa di laman rasmi Firebase kerana ia boleh berubah.
+- Jika pada masa depan dinaik taraf ke pelan berbayar, tetapkan Budget alert di Google Cloud Console, Billing, Budgets & alerts.
+
+Ciri baharu v2.8: nama majikan, tapis daerah, susun senarai, kongsi PDF, tarikh kemas kini, banner versi baharu.

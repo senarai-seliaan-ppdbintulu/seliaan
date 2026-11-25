@@ -1,0 +1,35 @@
+PANDUAN KESELAMATAN DAN PEMATUHAN - SISTEM SELIAAN ODP / OBB
+============================================================
+Senarai semak untuk pentadbir sistem. Data ini ialah maklumat peribadi yang sensitif.
+
+1. KEBENARAN
+[ ] Maklumkan atau dapatkan kebenaran bertulis Ketua Pejabat sebelum sistem digunakan secara rasmi. Rujuk juga peraturan jabatan mengenai penyimpanan data di luar sistem rasmi. Ini melindungi anda sebagai pentadbir.
+[ ] Simpan salinan emel/memo kebenaran itu.
+
+2. AKAUN
+[ ] Aktifkan pengesahan dua langkah (2-Step Verification) pada akaun GitHub dan akaun Google/Firebase anda.
+[ ] Hanya anda memegang akaun pentadbir. Jangan kongsi katakunci akaun GitHub/Firebase dengan pegawai lain.
+[ ] Katakunci bersama pegawai: kuat (12 aksara atau lebih), jangan guna tarikh lahir atau nama pejabat. Jangan hantar melalui kumpulan WhatsApp besar. Beritahu secara individu.
+[ ] Tukar katakunci bersama apabila pegawai berpindah/keluar, peranti hilang, atau disyaki bocor (lihat PANDUAN-FIREBASE.txt).
+
+3. PERANTI
+[ ] Setiap peranti ditetapkan PIN aplikasi dan kunci skrin peranti.
+[ ] Pilih masa kunci automatik yang pendek (1 hingga 5 minit).
+[ ] Jika hp hilang: tukar katakunci bersama segera. Data dalam hp itu dilindungi PIN dan kunci skrin, tetapi tukar katakunci menghalang penyelarasan baharu.
+[ ] Jangan log masuk pada komputer awam atau komputer bukan milik pejabat/pegawai.
+
+4. SANDARAN
+[ ] Eksport sandaran bersulit sekurang-kurangnya sebulan sekali (Data dan keselamatan, Eksport).
+[ ] Simpan fail sandaran di dua tempat berasingan, dengan kata laluan fail yang disimpan berasingan.
+[ ] Cuba Import ke satu peranti ujian sekali setahun untuk memastikan sandaran boleh dipulihkan.
+
+5. KANDUNGAN
+[ ] Hanya isi maklumat yang diperlukan untuk penyeliaan.
+[ ] Jangan ambil tangkapan skrin yang memaparkan nama/No. KP dan hantar ke kumpulan. Jika perlu, kaburkan dahulu.
+[ ] Laporan PDF/Excel yang dijana: kongsi hanya dengan pihak yang berhak, dan padam daripada peranti selepas digunakan.
+[ ] Padam rekod lama mengikut tempoh pegangan yang ditetapkan jabatan.
+
+6. APABILA BERLAKU INSIDEN
+Jika disyaki data bocor atau akaun dicerobohi: tukar katakunci bersama dan katakunci akaun Google/GitHub, semak pengguna dalam Firebase Authentication, dan maklumkan Ketua Pejabat.
+
+Nota: panduan ini cadangan amalan baik, bukan nasihat undang-undang. Rujuk pekeliling dan arahan jabatan anda.
