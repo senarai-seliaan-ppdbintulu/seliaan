@@ -86,7 +86,7 @@ tbody td.empty{display:block!important;grid-column:1/-1;background:var(--card);b
 <section id="lk" hidden><h2>Aplikasi dikunci</h2><label>Masukkan PIN<input id="lpin" type="password" inputmode="numeric" autocomplete="off" maxlength="8"></label><div class="err" id="lerr" role="alert"></div><button class="pri" id="lgo">Buka</button><button class="sec" id="lforgot">Lupa PIN</button></section>
 <div class="wrap" id="app">
 <h1>Sistem Seliaan ODP dan OBB</h1>
-<div class="ub"><span id="who">Data disimpan dalam peranti ini sahaja. (v2.8)</span><button class="sec" id="bsync" hidden>Selaras</button><button class="sec" id="bdata">Data dan PIN</button><button class="sec" id="blout" hidden>Log keluar</button></div>
+<div class="ub"><span id="who">Data disimpan dalam peranti ini sahaja. (v2.9)</span><button class="sec" id="bsync" hidden>Selaras</button><button class="sec" id="bdata">Data dan PIN</button><button class="sec" id="blout" hidden>Log keluar</button></div>
 <div class="tabs" id="main"><button class="on" data-m="odp">ODP</button><button data-m="obb">OBB</button></div>
 <section id="odp">
 <div class="tabs sub" id="sub"><button class="on" data-s="semasa">Seliaan semasa <span id="c1"></span></button><button data-s="gantung">Digantung / dibatalkan <span id="c3"></span></button><button data-s="bebas">Telah dibebaskan <span id="c2"></span></button><button data-s="pindah">Berpindah <span id="c4"></span></button></div>
@@ -235,7 +235,7 @@ var q=$("q").value.trim().toLowerCase(),off=$("off").value;
 drawSum();var hd=$("tb").parentNode.tHead.rows[0].cells,pd=tab==="pindah";hd[5].textContent=pd?"Lokasi baharu":"Pejabat";hd[6].textContent=pd?"Tarikh kuatkuasa":"Tarikh tamat";hd[7].textContent=pd?"Status":"Baki";var cnt={semasa:0,gantung:0,bebas:0,pindah:0};rows.forEach(function(r){if(inScope(r))cnt[st(r)]++});
 $("c1").textContent="("+cnt.semasa+")";$("c3").textContent="("+cnt.gantung+")";$("c2").textContent="("+cnt.bebas+")";$("c4").textContent="("+cnt.pindah+")";
 fillDae();var dq=$("dae").value;var list=rows.filter(function(r){return st(r)===tab&&inScope(r)}).filter(function(r){
-return(!off||r.pejabat===off)&&(!dq||(r.daerah||"").trim()===dq)&&(!UW||tab!=="semasa"||days(today,efTamat(r))<=UW)&&(!q||[r.nama,r.kp,r.smpp].join(" ").toLowerCase().indexOf(q)>-1)});
+return(!off||r.pejabat===off)&&(!dq||(r.daerah||"").trim().toLowerCase()===dq.toLowerCase())&&(!UW||tab!=="semasa"||days(today,efTamat(r))<=UW)&&(!q||[r.nama,r.kp,r.smpp].join(" ").toLowerCase().indexOf(q)>-1)});
 var so=$("srt").value;if(so==="nama")list.sort(function(a,b){return(a.nama||"").localeCompare(b.nama||"","ms")});else if(so==="baru")list.sort(function(a,b){var x=lastMod(a),y=lastMod(b);return x<y?1:x>y?-1:0});else list.sort(function(a,b){return a.tamat<b.tamat?(tab==="semasa"?-1:1):a.tamat>b.tamat?(tab==="semasa"?1:-1):0});
 if(!list.length){$("tb").innerHTML='<tr><td colspan="8" class="empty">Tiada rekod. Tekan Tambah '+C.name+' untuk memasukkan rekod pertama.</td></tr>';return}
 $("tb").innerHTML=list.map(function(r,i){
@@ -329,7 +329,7 @@ if(!pinCfg())h+='<button type="button" class="nb" data-go="pin">PIN belum diteta
 el0.innerHTML=h}
 function toast(msg,undo,label,ms){var t=$('tst');$('tmsg').textContent=msg;$('tundo').textContent=label||'Batal';TU=undo;clearTimeout(TT);try{t.showPopover&&t.showPopover()}catch(e){}t.classList.add('show');TT=setTimeout(hideToast,ms||10000)}
 function lastMod(r){var m=r.ru||'';['pel','pdh','pbl'].forEach(function(k){(r[k]||[]).forEach(function(p){if((p.u||'')>m)m=p.u})});if(r.bb&&r.bb.u>m)m=r.bb.u;return m}
-function fillDae(){var s=$('dae'),c={};rows.forEach(function(r){var d=(r.daerah||'').trim();if(d&&!r.del)c[d]=1});var k=Object.keys(c).sort(),sig=k.join('|');if(fillDae.s!==sig){fillDae.s=sig;var v=s.value;s.innerHTML='<option value="">Semua daerah</option>'+k.map(function(x){return '<option>'+esc(x)+'</option>'}).join('');s.value=k.indexOf(v)>-1?v:''}}
+function fillDae(){var s=$('dae'),c={Bintulu:1,Tatau:1},lc={bintulu:'Bintulu',tatau:'Tatau'};rows.forEach(function(r){var d=(r.daerah||'').trim();if(d&&!r.del&&!lc[d.toLowerCase()]){lc[d.toLowerCase()]=d;c[d]=1}});var k=Object.keys(c).sort(),sig=k.join('|');if(fillDae.s!==sig){fillDae.s=sig;var v=s.value;s.innerHTML='<option value="">Semua daerah</option>'+k.map(function(x){return '<option>'+esc(x)+'</option>'}).join('');s.value=k.indexOf(v)>-1?v:''}}
 function hideToast(){var t=$('tst');try{t.hidePopover&&t.hidePopover()}catch(e){}t.classList.remove('show');TU=null}
 function st(r){if(r.del)return"del";if(r.bb&&r.bb.t)return"bebas";var g=(r.pel||[]).some(function(p){return C.mv.some(function(k){return p[k]})})||(r.pbl||[]).some(function(q){return q.kuat});return g?'gantung':(movedItem(r)?'pindah':(autoBebas(r)?'bebas':'semasa'))}
 function curRow(){return rows.filter(function(x){return x.id===editId})[0]}
@@ -498,7 +498,7 @@ var CFG=(window.SLN_FB&&window.SLN_FB.apiKey&&window.SLN_FB.projectId)?window.SL
 try{RCM=JSON.parse(localStorage.getItem(RCK)||'{}')}catch(e){RCM={}}
 function saveRC(){try{localStorage.setItem(RCK,JSON.stringify(RCM))}catch(e){}}
 function kick(){if(!CFG||!AUTH)return;clearTimeout(kt);kt=setTimeout(function(){syncNow()},1500)}
-function setSyn(t){$('who').textContent=t+' (v2.8)'}
+function setSyn(t){$('who').textContent=t+' (v2.9)'}
 function fbBase(){return 'https://firestore.googleapis.com/v1/projects/'+CFG.projectId+'/databases/(default)/documents'}
 function loadAuth(){try{AUTH=JSON.parse(localStorage.getItem(AK)||'null')}catch(e){AUTH=null}}
 function saveAuth(){try{if(AUTH)localStorage.setItem(AK,JSON.stringify(AUTH));else localStorage.removeItem(AK)}catch(e){}}
@@ -682,7 +682,7 @@ $('tclose').addEventListener('click',function(){$('tdlg').close()});
 $('tlist').addEventListener('click',function(e){var b=e.target.closest('button[data-tr]');if(!b)return;var x=window.TRL[+b.dataset.tr];if(!x)return;x.r.del='';x.r.ru=NOW();saveAll();kick();rows=DB[C.key];drawTrash();render()});
 idleReset();
 if('serviceWorker' in navigator&&/^https?:/.test(location.protocol))navigator.serviceWorker.register('sw.js').catch(function(){});
-var APPV='2.8';function chkVer(){if(!/^https?:/.test(location.protocol)||navigator.onLine===false)return;fetch('index.html?v='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){var m=/\(v(\d+\.\d+)\)/.exec(t||'');if(m&&m[1]!==APPV&&parseFloat(m[1])>parseFloat(APPV))toast('Versi baharu (v'+m[1]+') tersedia.',function(){fetch('index.html?v='+Date.now(),{cache:'no-store'}).then(function(r){if(!r.ok)throw 0;var c1=r.clone(),c2=r.clone();return caches.open('seliaan-v3').then(function(c){return Promise.all([c.put('index.html',c1),c.put('./',c2)])})}).catch(function(){}).then(function(){location.reload()})},'Muat semula',30000)}).catch(function(){})}
+var APPV='2.9';function chkVer(){if(!/^https?:/.test(location.protocol)||navigator.onLine===false)return;fetch('index.html?v='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){var m=/\(v(\d+\.\d+)\)/.exec(t||'');if(m&&m[1]!==APPV&&parseFloat(m[1])>parseFloat(APPV))toast('Versi baharu (v'+m[1]+') tersedia.',function(){fetch('index.html?v='+Date.now(),{cache:'no-store'}).then(function(r){if(!r.ok)throw 0;var c1=r.clone(),c2=r.clone();return caches.open('seliaan-v3').then(function(c){return Promise.all([c.put('index.html',c1),c.put('./',c2)])})}).catch(function(){}).then(function(){location.reload()})},'Muat semula',30000)}).catch(function(){})}
 setTimeout(chkVer,4000);document.addEventListener('visibilitychange',function(){if(!document.hidden)setTimeout(chkVer,1500)});
 loadAuth();if(pinCfg())lockNow();gate();if(CFG&&AUTH)syncNow(true);
 </script>
