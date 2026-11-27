@@ -75,7 +75,7 @@ tbody td.empty{display:block!important;grid-column:1/-1;background:var(--card);b
 .yc{flex:none;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:99px;padding:6px 12px;font:inherit;font-size:.88rem;cursor:pointer;min-height:34px}
 .yc.on{background:var(--ac);color:var(--acx);border-color:var(--ac)}
 .yb{flex:none;margin-left:auto;font:inherit;font-size:.85rem;padding:6px 8px;min-height:34px;width:auto}
-.p-ft{background:var(--ac);color:var(--acx)}
+.p-ft{background:var(--ac);color:var(--acx)}.p-hi{background:transparent;border:1px solid currentColor;color:var(--ac)}.pc.hc{display:block}.pc.hc summary{cursor:pointer}.pc.hc p{margin:6px 0 0;font-size:.9rem}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
@@ -86,7 +86,7 @@ tbody td.empty{display:block!important;grid-column:1/-1;background:var(--card);b
 <section id="lk" hidden><h2>Aplikasi dikunci</h2><label>Masukkan PIN<input id="lpin" type="password" inputmode="numeric" autocomplete="off" maxlength="8"></label><div class="err" id="lerr" role="alert"></div><button class="pri" id="lgo">Buka</button><button class="sec" id="lforgot">Lupa PIN</button></section>
 <div class="wrap" id="app">
 <h1>Sistem Seliaan ODP dan OBB</h1>
-<div class="ub"><span id="who">Data disimpan dalam peranti ini sahaja. (v3.0)</span><button class="sec" id="bsync" hidden>Selaras</button><button class="sec" id="bhelp">Bantuan</button><button class="sec" id="bdata">Data dan PIN</button><button class="sec" id="blout" hidden>Log keluar</button></div>
+<div class="ub"><span id="who">Data disimpan dalam peranti ini sahaja. (v3.1)</span><button class="sec" id="bsync" hidden>Selaras</button><button class="sec" id="bhelp">Bantuan</button><button class="sec" id="bdata">Data dan PIN</button><button class="sec" id="blout" hidden>Log keluar</button></div>
 <div class="tabs" id="main"><button class="on" data-m="odp">ODP</button><button data-m="obb">OBB</button></div>
 <section id="odp">
 <div class="tabs sub" id="sub"><button class="on" data-s="semasa">Seliaan semasa <span id="c1"></span></button><button data-s="gantung">Digantung / dibatalkan <span id="c3"></span></button><button data-s="bebas">Telah dibebaskan <span id="c2"></span></button><button data-s="pindah">Berpindah <span id="c4"></span></button></div>
@@ -110,6 +110,7 @@ tbody td.empty{display:block!important;grid-column:1/-1;background:var(--card);b
 <div class="dh" id="dt">Tambah ODP</div>
 <div class="db" id="fields"></div>
 <p class="hint" id="tefek" style="padding:0 16px;margin:0"></p>
+<div class="pl" id="hs" hidden><div class="dh2">Sejarah pemantauan sebelum ini</div><div id="hlst"></div></div>
 <div class="pl" id="pl" hidden>
 <div class="dh2">Pelanggaran perintah</div>
 <div id="plist"></div>
@@ -160,7 +161,7 @@ tbody td.empty{display:block!important;grid-column:1/-1;background:var(--card);b
 </div>
 <p class="hint" id="bbmsg" role="status" style="padding:0 16px"></p>
 </div>
-<div class="err" id="err" role="alert"></div>
+<div class="hint" id="kphint" style="padding:0 16px"></div><div class="err" id="err" role="alert"></div>
 <div class="hint" id="rumeta" style="padding:0 16px"></div><div class="df"><button type="button" class="sec" id="bbgo" hidden style="color:var(--ok)">Bebaskan</button><button type="button" class="sec" id="del" hidden style="margin-right:auto;color:var(--dg)">Padam rekod</button><button type="button" class="sec" id="cancel">Batal</button><button type="submit" class="pri">Simpan</button></div>
 </form>
 </dialog>
@@ -185,6 +186,7 @@ tbody td.empty{display:block!important;grid-column:1/-1;background:var(--card);b
 <details><summary>Cari dan tapis</summary><p class="hint">Taip nama, No. KP atau No. SMPP. Pilih pejabat, daerah atau susunan. Ketik butang "Tamat dalam 7 / 14 / 30 hari" untuk lihat yang hampir tamat.</p></details>
 <details><summary>Pelanggaran, gantung dan batal</summary><p class="hint">Buka rekod, ke bahagian pelanggaran, isi dan Simpan. Apabila tarikh gantung atau batal diisi, nama berpindah ke senarai Digantung / dibatalkan. Salah isi? Tekan Padam pada entri itu, dan tekan Batal dalam 10 saat jika tersilap padam.</p></details>
 <details><summary>Pindah atau tukar alamat</summary><p class="hint">Dalam rekod, isi permohonan pindah. Apabila tarikh kuat kuasa diisi dan lokasi baharu bukan Bintulu / Tatau, nama masuk senarai Berpindah.</p></details>
+<details><summary>Pernah dipantau (masuk semula)</summary><p class="hint">Taip No. KP orang yang pernah dipantau dan sudah bebas, dan sistem akan memberi tahu. Simpan untuk mendaftar pemantauan baharu: isi kes dan alamat baharu. Rekod lama kekal sebagai "Sejarah pemantauan sebelum ini" dalam rekod, dan lencana "Pernah dipantau" muncul pada nama.</p></details>
 <details><summary>Bebas</summary><p class="hint">Bebas automatik pada jam 12 tengah hari bagi yang tamat tanpa pelanggaran. Jika tarikh tamat jatuh pada hujung minggu atau cuti umum, bebas pada hari bekerja sebelumnya. Untuk bebas awal (denda, meninggal dunia dan lain-lain), buka rekod dan tekan Bebaskan.</p></details>
 <details><summary>Laporan PDF / Excel</summary><p class="hint">Buka "Jana laporan PDF / Excel". Pilih senarai, lokasi dan tahun, kemudian tekan Muat turun, atau Kongsi PDF untuk WhatsApp. Butang "Ringkasan bulanan" menjana satu muka surat jumlah bagi bulan yang dipilih.</p></details>
 <details><summary>Selaras, sandaran dan keselamatan</summary><p class="hint">Data selaras automatik antara peranti apabila ada internet. Eksport sandaran sebulan sekali di Data dan PIN. Tetapkan PIN pada setiap peranti.</p></details>
@@ -249,14 +251,15 @@ $("c1").textContent="("+cnt.semasa+")";$("c3").textContent="("+cnt.gantung+")";$
 fillDae();var dq=$("dae").value;var list=rows.filter(function(r){return st(r)===tab&&inScope(r)}).filter(function(r){
 return(!off||r.pejabat===off)&&(!dq||(r.daerah||"").trim().toLowerCase()===dq.toLowerCase())&&(!UW||tab!=="semasa"||days(today,efTamat(r))<=UW)&&(!q||[r.nama,r.kp,r.smpp].join(" ").toLowerCase().indexOf(q)>-1)});
 var so=$("srt").value;if(so==="nama")list.sort(function(a,b){return(a.nama||"").localeCompare(b.nama||"","ms")});else if(so==="baru")list.sort(function(a,b){var x=lastMod(a),y=lastMod(b);return x<y?1:x>y?-1:0});else list.sort(function(a,b){return a.tamat<b.tamat?(tab==="semasa"?-1:1):a.tamat>b.tamat?(tab==="semasa"?1:-1):0});
-if(!list.length){$("tb").innerHTML='<tr><td colspan="8" class="empty">Tiada rekod. Tekan Tambah '+C.name+' untuk memasukkan rekod pertama.</td></tr>';return}
+if(!list.length){var oth="";if(q){var oc={};rows.forEach(function(r){if(r.del||!inScopeAny(r))return;var s=st(r);if(s!==tab&&[r.nama,r.kp,r.smpp].join(" ").toLowerCase().indexOf(q)>-1)oc[s]=(oc[s]||0)+1});oth=Object.keys(oc).map(function(s){return (HSTL[s]||s)+" ("+oc[s]+")"}).join(", ")}
+$("tb").innerHTML='<tr><td colspan="8" class="empty">'+(oth?'Tiada dalam senarai ini. Ditemui dalam: '+oth+'.':'Tiada rekod. Tekan Tambah '+C.name+' untuk memasukkan rekod pertama.')+'</td></tr>';return}
 $("tb").innerHTML=list.map(function(r,i){
 var ef=efTamat(r),b=days(today,ef),pill,mv=tab==="pindah"?movedItem(r):null;
 if(tab==="bebas")pill='<span class="pill p-ok">'+(r.bb&&r.bb.t?bbLabel(r.bb.s):"Tamat")+'</span>';
 else if(tab==="pindah")pill='<span class="pill p-ok">Berpindah</span>';
 else if(tab==="gantung")pill='<span class="pill p-dg">'+C.pill(r)+"</span>";
 else pill='<span class="pill '+(b<=7?"p-dg":b<=30?"p-wn":"p-ok")+'">'+(b<0?"Lewat "+(-b)+" hari":b+" hari")+"</span>";
-return'<tr data-id="'+r.id+'"><td>'+(i+1)+"</td><td>"+esc(r.nama)+(r.kategori==="Fast Track"?' <span class="pill p-ft">Fast Track</span>':"")+(tab==="semasa"&&(r.pbl||[]).some(function(q){return !q.kuat})?' <span class="pill p-wn">Mohon panggil balik</span>':"")+(tab==="semasa"&&(r.pel||[]).length?' <span class="pill p-wn">Pelanggaran</span>':"")+(tab==="semasa"&&tunda(r)?' <span class="pill p-dg">Belum diputuskan lebih 30 hari</span>':"")+(tab==="semasa"&&pendPd(r)?' <span class="pill p-wn">Mohon pindah</span>':"")+'</td><td class="n">'+esc(r.kp)+"</td><td>"+esc(r.smpp)+"</td><td>"+esc(r.kerja)+"</td><td>"+(mv?esc(mv.lokasi):(r.pejabat===P1?"Bintulu":"Tatau"))+'</td><td class="n" data-l="'+(mv?"Kuatkuasa: ":(tab==="bebas"&&r.bb&&r.bb.t?"Bebas: ":"Tamat: "))+'">'+(mv?dmy(mv.lulus):(tab==="bebas"&&r.bb&&r.bb.t?dmy(r.bb.t):dmy(ef)+(ef!==r.tamat?' <span class="pill p-wn">awal</span>':"")))+"</td><td>"+pill+"</td></tr>"}).join("");
+return'<tr data-id="'+r.id+'"><td>'+(i+1)+"</td><td>"+esc(r.nama)+(r.kategori==="Fast Track"?' <span class="pill p-ft">Fast Track</span>':"")+(tab==="semasa"&&(r.pbl||[]).some(function(q){return !q.kuat})?' <span class="pill p-wn">Mohon panggil balik</span>':"")+(tab==="semasa"&&(r.pel||[]).length?' <span class="pill p-wn">Pelanggaran</span>':"")+(tab==="semasa"&&tunda(r)?' <span class="pill p-dg">Belum diputuskan lebih 30 hari</span>':"")+(histN(r)?' <span class="pill p-hi">Pernah dipantau'+(histN(r)>1?' x'+histN(r):'')+'</span>':"")+(tab==="semasa"&&pendPd(r)?' <span class="pill p-wn">Mohon pindah</span>':"")+'</td><td class="n">'+esc(r.kp)+"</td><td>"+esc(r.smpp)+"</td><td>"+esc(r.kerja)+"</td><td>"+(mv?esc(mv.lokasi):(r.pejabat===P1?"Bintulu":"Tatau"))+'</td><td class="n" data-l="'+(mv?"Kuatkuasa: ":(tab==="bebas"&&r.bb&&r.bb.t?"Bebas: ":"Tamat: "))+'">'+(mv?dmy(mv.lulus):(tab==="bebas"&&r.bb&&r.bb.t?dmy(r.bb.t):dmy(ef)+(ef!==r.tamat?' <span class="pill p-wn">awal</span>':"")))+"</td><td>"+pill+"</td></tr>"}).join("");
 }
 
 function build(){
@@ -280,9 +283,10 @@ if(!r)el("pejabat").value=$("off").value||P1;if(el("kategori")&&!el("kategori").
 el("kp").addEventListener("input",function(){
 var d=this.value.replace(/\D/g,"").slice(0,12),o=d.slice(0,6);
 if(d.length>6)o+="-"+d.slice(6,8);if(d.length>8)o+="-"+d.slice(8);
-this.value=o;if(d.length===12)el("jantina").value=(+d[11])%2?"Lelaki":"Perempuan"});
+this.value=o;if(d.length===12)el("jantina").value=(+d[11])%2?"Lelaki":"Perempuan";
+var kh=$("kphint");kh.textContent="";if(d.length===12&&!editId){var ex=kpFind(o);if(ex){var s0=st(ex);if(s0==="semasa")kh.textContent="Perhatian: "+ex.nama+" masih dalam seliaan semasa. Rekod tidak boleh didaftar dua kali.";else{kh.textContent="Pernah dipantau: "+ex.nama+" ("+(HSTL[s0]||"")+"). Jika disimpan, ini didaftar sebagai pemantauan baharu dan rekod lama disimpan sebagai sejarah.";["nama","smpp","bangsa","agama","jantina"].forEach(function(k){if(el(k)&&!el(k).value&&ex[k])el(k).value=ex[k]})}}}});
 el("mula").addEventListener("change",calc);el("tamat").addEventListener("change",calc);
-$("pl").hidden=!r;$("pmsg").textContent="";clearP();if(r)drawPel(r);calc();$("qd").hidden=!r;$("qmsg").textContent="";clearQ();qsync();if(r)drawQ(r);$("bd").hidden=!r||C.key!=="obb";$("bmsg").textContent="";clearB();if(r&&C.key==="obb")drawB(r);$("bbk").hidden=!r;$("bbgo").hidden=!r;$("bbmsg").textContent="";if(r)drawBB(r);$("del").hidden=!r;$("rumeta").textContent=(r&&lastMod(r)>EPOCH)?"Dikemas kini terakhir: "+dmy(fmt(new Date(lastMod(r))))+" "+pad(new Date(lastMod(r)).getHours())+":"+pad(new Date(lastMod(r)).getMinutes()):"";$("dlg").showModal();
+$("pl").hidden=!r;$("pmsg").textContent="";clearP();if(r)drawPel(r);calc();$("qd").hidden=!r;$("qmsg").textContent="";clearQ();qsync();if(r)drawQ(r);$("bd").hidden=!r||C.key!=="obb";$("bmsg").textContent="";clearB();if(r&&C.key==="obb")drawB(r);$("bbk").hidden=!r;$("bbgo").hidden=!r;$("bbmsg").textContent="";if(r)drawBB(r);drawHist(r);$("kphint").textContent="";$("del").hidden=!r;$("rumeta").textContent=(r&&lastMod(r)>EPOCH)?"Dikemas kini terakhir: "+dmy(fmt(new Date(lastMod(r))))+" "+pad(new Date(lastMod(r)).getHours())+":"+pad(new Date(lastMod(r)).getMinutes()):"";$("dlg").showModal();
 }
 
 $("f").addEventListener("submit",function(ev){
@@ -292,7 +296,7 @@ if(/^\d{12}$/.test(o.kp))o.kp=o.kp.slice(0,6)+'-'+o.kp.slice(6,8)+'-'+o.kp.slice
 var m="";
 if(!o.nama)m="Isi nama "+C.name+".";
 else if(!/^\d{6}-\d{2}-\d{4}$/.test(o.kp))m="No. KP mesti dalam format 000000-00-0000.";
-else if(rows.some(function(r){return r.kp===o.kp&&r.id!==editId&&!r.del}))m="No. KP ini sudah wujud dalam sistem.";
+else if(rows.some(function(r){return r.kp===o.kp&&r.id!==editId&&!r.del&&(editId||st(r)==="semasa")}))m=editId?"No. KP ini sudah wujud dalam sistem.":"No. KP ini masih dalam seliaan semasa. Cari namanya dalam senarai dan kemas kini rekod itu.";
 else if(!o.mula||!o.tamat)m="Isi tarikh mula dan tarikh tamat.";
 else if(o.tamat<o.mula)m="Tarikh tamat mesti selepas tarikh mula.";
 else if(!o.pejabat)m="Pilih pejabat pemantau.";
@@ -306,7 +310,8 @@ if(wn.length&&!confirm('Sila semak:\n\n- '+wn.join('\n- ')+'\n\nSimpan juga?'))r
 $("err").textContent="";
 o.tempoh=days(o.mula,o.tamat);o.ru=NOW();
 if(editId){rows=rows.map(function(r){return r.id===editId?Object.assign({},r,o):r})}
-else{var tb=rows.filter(function(r){return r.kp===o.kp&&r.del})[0];if(tb){Object.assign(tb,o,{del:""})}else{o.id=rows.reduce(function(a,r){return Math.max(a,r.id)},0)+1;o.pel=[];rows.push(o)}}
+else{var ex2=kpFind(o.kp);if(ex2){if(!confirm("Orang ini pernah dipantau ("+(HSTL[st(ex2)]||"")+").\n\nDaftar sebagai pemantauan baharu? Rekod lama (kes, alamat, pelanggaran, tarikh) disimpan sebagai sejarah dan tidak dibawa ke rekod baharu."))return;archiveEp(ex2);Object.assign(ex2,o,{del:"",ru:NOW()});save();$("dlg").close();render();toast("Didaftar sebagai pemantauan baharu.",null,"Tutup");return}
+var tb=rows.filter(function(r){return r.kp===o.kp&&r.del})[0];if(tb){Object.assign(tb,o,{del:""})}else{o.id=rows.reduce(function(a,r){return Math.max(a,r.id)},0)+1;o.pel=[];rows.push(o)}}
 save();$("dlg").close();render();
 });
 $("cancel").addEventListener("click",function(){$("dlg").close()});
@@ -344,6 +349,19 @@ function tunda(r){return(r.pel||[]).some(function(p){return !C.mv.some(function(
 function lastMod(r){var m=r.ru||'';['pel','pdh','pbl'].forEach(function(k){(r[k]||[]).forEach(function(p){if((p.u||'')>m)m=p.u})});if(r.bb&&r.bb.u>m)m=r.bb.u;return m}
 function fillDae(){var s=$('dae'),c={Bintulu:1,Tatau:1},lc={bintulu:'Bintulu',tatau:'Tatau'};rows.forEach(function(r){var d=(r.daerah||'').trim();if(d&&!r.del&&!lc[d.toLowerCase()]){lc[d.toLowerCase()]=d;c[d]=1}});var k=Object.keys(c).sort(),sig=k.join('|');if(fillDae.s!==sig){fillDae.s=sig;var v=s.value;s.innerHTML='<option value="">Semua daerah</option>'+k.map(function(x){return '<option>'+esc(x)+'</option>'}).join('');s.value=k.indexOf(v)>-1?v:''}}
 function hideToast(){var t=$('tst');try{t.hidePopover&&t.hidePopover()}catch(e){}t.classList.remove('show');TU=null}
+
+var EPF=['smpp','perintah','dari','kes','mula','tamat','tempoh','daerah','kerja','pejabat','jenisAlamat','namaMajikan','alamat','kategori'];
+function archiveEp(r){var s=st(r),on=!!(r.bb&&r.bb.t),snap={pid:uid(),u:NOW(),s:s,bd:on?r.bb.t:efTamat(r),bs:on?(r.bb.s||''):'',bk:on?(r.bb.k||''):'',f:{}};
+EPF.forEach(function(k){if(r[k])snap.f[k]=r[k]});
+r.dt=r.dt||[];['pel','pdh','pbl'].forEach(function(k){if((r[k]||[]).length){snap[k]=JSON.parse(JSON.stringify(r[k]));r[k].forEach(function(p){r.dt=r.dt.filter(function(t){return t.pid!==p.pid});r.dt.push({pid:p.pid,u:NOW()})});r[k]=[]}});
+r.bb={t:'',s:'',k:'',u:NOW()};r.hist=(r.hist||[]).concat([snap])}
+function inScopeAny(r){return true}
+function histN(r){return(r.hist||[]).length}
+var HSTL={bebas:'Dibebaskan',gantung:'Digantung / dibatalkan',pindah:'Berpindah',semasa:'Seliaan semasa',del:'-'};
+function drawHist(r){var l=(r&&r.hist)||[];$('hs').hidden=!l.length;$('hlst').innerHTML=l.map(function(x,i){var f=x.f||{};return '<details class="pc hc"><summary><b>Pemantauan '+(i+1)+'</b> | '+(dmy(f.mula)||'-')+' hingga '+(dmy(f.tamat)||'-')+' | '+(HSTL[x.s]||'-')+(x.bd&&x.s==='bebas'?' '+dmy(x.bd):'')+'</summary>'
++'<p>No. Perintah / Lesen: '+esc(f.perintah||'-')+' | Dari: '+esc(f.dari||'-')+'<br>Kes: '+esc(f.kes||'-')+'<br>Alamat: '+esc(f.alamat||'-')+(f.jenisAlamat?' ('+esc(f.jenisAlamat)+(f.namaMajikan?': '+esc(f.namaMajikan):'')+')':'')+'<br>Pejabat: '+esc(f.pejabat||'-')+(x.bs?'<br>Sebab bebas: '+esc(bbLabel(x.bs))+(x.bk?' | '+esc(x.bk):''):'')
++((x.pel||[]).length?'<br>Pelanggaran: '+x.pel.map(function(p){return esc(p.jenis||'')+' '+dmy(p.tarikh)}).join('; '):'')+'</p></details>'}).join('')}
+function kpFind(kp){return rows.filter(function(r){return r.kp===kp&&!r.del})[0]}
 function st(r){if(r.del)return"del";if(r.bb&&r.bb.t)return"bebas";var g=(r.pel||[]).some(function(p){return C.mv.some(function(k){return p[k]})})||(r.pbl||[]).some(function(q){return q.kuat});return g?'gantung':(movedItem(r)?'pindah':(autoBebas(r)?'bebas':'semasa'))}
 function curRow(){return rows.filter(function(x){return x.id===editId})[0]}
 function clearP(){pe=null;['pjenis','ptarikh','ptempat','pnama','pgantung','pbatal'].forEach(function(k){$(k).value=''})}
@@ -375,7 +393,7 @@ return b.concat(has(function(r){return (r.pel||[]).length})?PC():[]).concat(has(
 var KW={nama:26,kategori:12,kp:16,smpp:14,jantina:10,agama:10,bangsa:10,perintah:18,dari:18,kes:22,mula:12,tamat:12,_ef:14,tempoh:10,daerah:12,kerja:18,alamat:34,_bs:32,_bk:28};
 var PW={p:{jenis:26,tarikh:15,_t:28,gantung:16,batal:16},d:{jenis:24,mohon:16,alamat:30,lokasi:22,lulus:16},b:{sebab:26,mohon:16,kuat:16}};
 function colW(c,i){if(i===0&&c.length===1)return 6;if(c[3]&&PW[c[3]])return PW[c[3]][c[1]]||16;return KW[c[1]]||16}
-function cell(r,c,i){if(c[3]==='b')return bcell(r,c);if(c[1]==='kategori')return r.kategori||'Biasa';if(c[1]==='_ef')return dmy((r.bb&&r.bb.t)||efTamat(r));if(c[1]==='_bs')return sebabBebas(r);if(c[1]==='_bk')return r.bb&&r.bb.t?(r.bb.k||''):'';if(c[1]==='tempoh')return (r.mula&&r.tamat)?days(r.mula,r.tamat)+1:'';if(c[3]==='p')return pcell(r,c);if(c[3]==='d')return dcell(r,c);if(c[1]==='alamat'&&c.length===2)return alamatText(r);return c.length===1?i+1:(c[2]?dmy(r[c[1]]):(r[c[1]]==null?'':r[c[1]]))}
+function cell(r,c,i){if(c[1]==='nama'&&c.length<=2&&(r.hist||[]).length&&!c[3])return String(r.nama||'')+'\n(Pernah dipantau)';if(c[3]==='b')return bcell(r,c);if(c[1]==='kategori')return r.kategori||'Biasa';if(c[1]==='_ef')return dmy((r.bb&&r.bb.t)||efTamat(r));if(c[1]==='_bs')return sebabBebas(r);if(c[1]==='_bk')return r.bb&&r.bb.t?(r.bb.k||''):'';if(c[1]==='tempoh')return (r.mula&&r.tamat)?days(r.mula,r.tamat)+1:'';if(c[3]==='p')return pcell(r,c);if(c[3]==='d')return dcell(r,c);if(c[1]==='alamat'&&c.length===2)return alamatText(r);return c.length===1?i+1:(c[2]?dmy(r[c[1]]):(r[c[1]]==null?'':r[c[1]]))}
 function getList(t,useQ){var q=useQ?$('q').value.trim().toLowerCase():'',off=$('off').value,d=t==='semasa'?1:-1;return rows.filter(function(r){return st(r)===t&&inScope(r)&&locOK(r)&&(!off||r.pejabat===off)&&(!q||[r.nama,r.kp,r.smpp].join(' ').toLowerCase().indexOf(q)>-1)}).sort(function(a,b){return (a.tamat<b.tamat?-1:a.tamat>b.tamat?1:0)*d})}
 function meta(tb){var off=$('off').value;return{t1:off||(P1+' / '+P2),t2:'Senarai '+C.name+' '+C.tl[tb]+(KT?' ('+KT+')':'')+(YR?' - '+(YB==='tamat'?'Tahun bebas ':'Tahun mula ')+YR:'')+(LK==='keluarga'?' - Lokasi: Keluarga':LK==='majikan'?' - Lokasi: Majikan':LK==='tertentu'?' - Majikan: '+(LN||'semua'):''),t3:'Dijana pada '+dmy(today)}}
 /* ===== Laporan: jadual berasingan bagi pelanggaran, panggil balik dan permohonan pindah ===== */
@@ -508,7 +526,7 @@ $('bhelp').addEventListener('click',function(){$('bdlg').showModal()});$('bhclos
 $('xxls').addEventListener('click',function(){out('xls')});$('xsh').addEventListener('click',function(){out('pdf','share')});$('xpr').addEventListener('click',function(){out('pdf','print')});
 skin();render();
 $("del").addEventListener("click",function(){var r=curRow();if(!r)return;
-if(!confirm('Padam rekod "'+r.nama+'"?\n\nRekod akan hilang daripada senarai dan laporan, dan turut dipadam pada peranti lain. Anda boleh memulihkannya melalui Data dan keselamatan, Rekod dipadam.\n\nJika orang ini sebenarnya sudah bebas, JANGAN padam. Kemas kini tarikh tamat supaya ia berpindah ke senarai Telah dibebaskan.'))return;
+if(!confirm('Padam rekod "'+r.nama+'"?'+(histN(r)?'\n\nPerhatian: sejarah pemantauan sebelum ini ('+histN(r)+') turut dipadam.':'')+'\n\nRekod akan hilang daripada senarai dan laporan, dan turut dipadam pada peranti lain. Anda boleh memulihkannya melalui Data dan keselamatan, Rekod dipadam.\n\nJika orang ini sebenarnya sudah bebas, JANGAN padam. Kemas kini tarikh tamat supaya ia berpindah ke senarai Telah dibebaskan.'))return;
 r.del=NOW();r.ru=NOW();save();$("dlg").close();render();var rid=r.id;toast('Rekod dipadam.',function(){var x=rows.filter(function(z){return z.id===rid})[0];if(x){x.del='';x.ru=NOW();save();render()}})});
 var pe2=null;
 function movedItem(r){var b=null;(r.pdh||[]).forEach(function(q){if(q.jenis==='keluar'&&q.lokasi&&q.lulus&&q.lulus<=today&&(!b||q.lulus>b.lulus))b=q});return b}
@@ -554,7 +572,7 @@ var CFG=(window.SLN_FB&&window.SLN_FB.apiKey&&window.SLN_FB.projectId)?window.SL
 try{RCM=JSON.parse(localStorage.getItem(RCK)||'{}')}catch(e){RCM={}}
 function saveRC(){try{localStorage.setItem(RCK,JSON.stringify(RCM))}catch(e){}}
 function kick(){if(!CFG||!AUTH)return;clearTimeout(kt);kt=setTimeout(function(){syncNow()},1500)}
-function setSyn(t){$('who').textContent=t+' (v3.0)'}
+function setSyn(t){$('who').textContent=t+' (v3.1)'}
 function fbBase(){return 'https://firestore.googleapis.com/v1/projects/'+CFG.projectId+'/databases/(default)/documents'}
 function loadAuth(){try{AUTH=JSON.parse(localStorage.getItem(AK)||'null')}catch(e){AUTH=null}}
 function saveAuth(){try{if(AUTH)localStorage.setItem(AK,JSON.stringify(AUTH));else localStorage.removeItem(AK)}catch(e){}}
@@ -573,7 +591,7 @@ var j=null;try{j=await r.json()}catch(e){}
 if(!r.ok){var er=new Error((j&&j.error&&j.error.message)||('HTTP '+r.status));er.status=r.status;throw er}return j}
 function strip(r){var o={};Object.keys(r).forEach(function(k){if(k!=='id')o[k]=r[k]});return o}
 function sk(v){if(Array.isArray(v))return v.map(sk);if(v&&typeof v==='object'){var o={};Object.keys(v).sort().forEach(function(k){var x=sk(v[k]);if(x===''||x===null||x===undefined||(Array.isArray(x)&&!x.length))return;o[k]=x});return o}return v}
-function canon(r){var o=strip(r);['pel','pdh','pbl','dt'].forEach(function(k){if(o[k])o[k]=o[k].slice().sort(function(a,b){return a.pid<b.pid?-1:a.pid>b.pid?1:0})});return JSON.stringify(sk(o))}
+function canon(r){var o=strip(r);['pel','pdh','pbl','dt','hist'].forEach(function(k){if(o[k])o[k]=o[k].slice().sort(function(a,b){return a.pid<b.pid?-1:a.pid>b.pid?1:0})});return JSON.stringify(sk(o))}
 function ch(r){var s=canon(r),x=2166136261;for(var i=0;i<s.length;i++){x^=s.charCodeAt(i);x=Math.imul(x,16777619)}return (x>>>0).toString(36)+'.'+s.length}
 function mergeRemote(inc){var d=allData(),c=false;['odp','obb'].forEach(function(k){if(!inc[k].length)return;var r=mergeInto(d[k],inc[k]);if(r.add||r.upd)c=true});if(c){rows=DB[C.key];saveAll();if(!$('dlg').open)render()}}
 async function pullAll(){var wm=localStorage.getItem(WMK)||'',total=0;
@@ -672,6 +690,7 @@ if(nd.length&&JSON.stringify(nd)!==od){l.dt=nd;ch=true}
 var dead=function(p){return tb[p.pid]&&tb[p.pid]>=(p.u||'')};
 ['pel','pdh','pbl'].forEach(function(k){if(l[k]&&l[k].length){var f=l[k].filter(function(p){return !dead(p)});if(f.length!==l[k].length){l[k]=f;ch=true}}});
 if((x.ru||EPOCH)>(l.ru||EPOCH)){FIELDS.forEach(function(k){if(l[k]!==x[k]){l[k]=x[k];ch=true}});if((l.del||'')!==(x.del||'')){l.del=x.del||'';ch=true}l.ru=x.ru}
+if((x.hist||[]).length){var hm={};l.hist=l.hist||[];l.hist.forEach(function(p){hm[p.pid]=1});x.hist.forEach(function(p){if(p&&p.pid&&!hm[p.pid]){l.hist.push(JSON.parse(JSON.stringify(p)));ch=true}})}
 var pm={};l.pel=l.pel||[];l.pel.forEach(function(p){pm[p.pid]=p});
 (x.pel||[]).forEach(function(p){if(!p.pid||dead(p))return;var q=pm[p.pid];if(!q){l.pel.push(Object.assign({},p));ch=true}else if((p.u||EPOCH)>(q.u||EPOCH)){Object.assign(q,p);ch=true}});
 var dm={};l.pdh=l.pdh||[];l.pdh.forEach(function(p){dm[p.pid]=p});
@@ -738,7 +757,7 @@ $('tclose').addEventListener('click',function(){$('tdlg').close()});
 $('tlist').addEventListener('click',function(e){var b=e.target.closest('button[data-tr]');if(!b)return;var x=window.TRL[+b.dataset.tr];if(!x)return;x.r.del='';x.r.ru=NOW();saveAll();kick();rows=DB[C.key];drawTrash();render()});
 idleReset();
 if('serviceWorker' in navigator&&/^https?:/.test(location.protocol))navigator.serviceWorker.register('sw.js').catch(function(){});
-var APPV='3.0';function chkVer(){if(!/^https?:/.test(location.protocol)||navigator.onLine===false)return;fetch('index.html?v='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){var m=/\(v(\d+\.\d+)\)/.exec(t||'');if(m&&m[1]!==APPV&&parseFloat(m[1])>parseFloat(APPV))toast('Versi baharu (v'+m[1]+') tersedia.',function(){fetch('index.html?v='+Date.now(),{cache:'no-store'}).then(function(r){if(!r.ok)throw 0;var c1=r.clone(),c2=r.clone();return caches.open('seliaan-v3').then(function(c){return Promise.all([c.put('index.html',c1),c.put('./',c2)])})}).catch(function(){}).then(function(){location.reload()})},'Muat semula',30000)}).catch(function(){})}
+var APPV='3.1';function chkVer(){if(!/^https?:/.test(location.protocol)||navigator.onLine===false)return;fetch('index.html?v='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){var m=/\(v(\d+\.\d+)\)/.exec(t||'');if(m&&m[1]!==APPV&&parseFloat(m[1])>parseFloat(APPV))toast('Versi baharu (v'+m[1]+') tersedia.',function(){fetch('index.html?v='+Date.now(),{cache:'no-store'}).then(function(r){if(!r.ok)throw 0;var c1=r.clone(),c2=r.clone();return caches.open('seliaan-v3').then(function(c){return Promise.all([c.put('index.html',c1),c.put('./',c2)])})}).catch(function(){}).then(function(){location.reload()})},'Muat semula',30000)}).catch(function(){})}
 setTimeout(chkVer,4000);document.addEventListener('visibilitychange',function(){if(!document.hidden)setTimeout(chkVer,1500)});
 loadAuth();if(pinCfg())lockNow();gate();if(CFG&&AUTH)syncNow(true);
 </script>
