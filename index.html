@@ -75,7 +75,7 @@ tbody td.empty{display:block!important;grid-column:1/-1;background:var(--card);b
 .yc{flex:none;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:99px;padding:6px 12px;font:inherit;font-size:.88rem;cursor:pointer;min-height:34px}
 .yc.on{background:var(--ac);color:var(--acx);border-color:var(--ac)}
 .yb{flex:none;margin-left:auto;font:inherit;font-size:.85rem;padding:6px 8px;min-height:34px;width:auto}
-.p-ft{background:var(--ac);color:var(--acx)}.p-hi{background:transparent;border:1px solid currentColor;color:var(--ac)}.pc.hc{display:block}.pc.hc summary{cursor:pointer}.pc.hc p{margin:6px 0 0;font-size:.9rem}
+.p-ft{background:var(--ac);color:var(--acx)}.kph{grid-column:1/-1;padding:8px 10px;border-radius:8px;background:var(--wnb);color:var(--wn);font-size:.9rem;line-height:1.35}.p-hi{background:transparent;border:1px solid currentColor;color:var(--ac)}.pc.hc{display:block}.pc.hc summary{cursor:pointer}.pc.hc p{margin:6px 0 0;font-size:.9rem}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
@@ -86,7 +86,7 @@ tbody td.empty{display:block!important;grid-column:1/-1;background:var(--card);b
 <section id="lk" hidden><h2>Aplikasi dikunci</h2><label>Masukkan PIN<input id="lpin" type="password" inputmode="numeric" autocomplete="off" maxlength="8"></label><div class="err" id="lerr" role="alert"></div><button class="pri" id="lgo">Buka</button><button class="sec" id="lforgot">Lupa PIN</button></section>
 <div class="wrap" id="app">
 <h1>Sistem Seliaan ODP dan OBB</h1>
-<div class="ub"><span id="who">Data disimpan dalam peranti ini sahaja. (v3.1)</span><button class="sec" id="bsync" hidden>Selaras</button><button class="sec" id="bhelp">Bantuan</button><button class="sec" id="bdata">Data dan PIN</button><button class="sec" id="blout" hidden>Log keluar</button></div>
+<div class="ub"><span id="who">Data disimpan dalam peranti ini sahaja. (v3.2)</span><button class="sec" id="bsync" hidden>Selaras</button><button class="sec" id="bhelp">Bantuan</button><button class="sec" id="bdata">Data dan PIN</button><button class="sec" id="blout" hidden>Log keluar</button></div>
 <div class="tabs" id="main"><button class="on" data-m="odp">ODP</button><button data-m="obb">OBB</button></div>
 <section id="odp">
 <div class="tabs sub" id="sub"><button class="on" data-s="semasa">Seliaan semasa <span id="c1"></span></button><button data-s="gantung">Digantung / dibatalkan <span id="c3"></span></button><button data-s="bebas">Telah dibebaskan <span id="c2"></span></button><button data-s="pindah">Berpindah <span id="c4"></span></button></div>
@@ -161,7 +161,7 @@ tbody td.empty{display:block!important;grid-column:1/-1;background:var(--card);b
 </div>
 <p class="hint" id="bbmsg" role="status" style="padding:0 16px"></p>
 </div>
-<div class="hint" id="kphint" style="padding:0 16px"></div><div class="err" id="err" role="alert"></div>
+<div class="err" id="err" role="alert"></div>
 <div class="hint" id="rumeta" style="padding:0 16px"></div><div class="df"><button type="button" class="sec" id="bbgo" hidden style="color:var(--ok)">Bebaskan</button><button type="button" class="sec" id="del" hidden style="margin-right:auto;color:var(--dg)">Padam rekod</button><button type="button" class="sec" id="cancel">Batal</button><button type="submit" class="pri">Simpan</button></div>
 </form>
 </dialog>
@@ -284,9 +284,13 @@ el("kp").addEventListener("input",function(){
 var d=this.value.replace(/\D/g,"").slice(0,12),o=d.slice(0,6);
 if(d.length>6)o+="-"+d.slice(6,8);if(d.length>8)o+="-"+d.slice(8);
 this.value=o;if(d.length===12)el("jantina").value=(+d[11])%2?"Lelaki":"Perempuan";
-var kh=$("kphint");kh.textContent="";if(d.length===12&&!editId){var ex=kpFind(o);if(ex){var s0=st(ex);if(s0==="semasa")kh.textContent="Perhatian: "+ex.nama+" masih dalam seliaan semasa. Rekod tidak boleh didaftar dua kali.";else{kh.textContent="Pernah dipantau: "+ex.nama+" ("+(HSTL[s0]||"")+"). Jika disimpan, ini didaftar sebagai pemantauan baharu dan rekod lama disimpan sebagai sejarah.";["nama","smpp","bangsa","agama","jantina"].forEach(function(k){if(el(k)&&!el(k).value&&ex[k])el(k).value=ex[k]})}}}});
+var kh0=document.getElementById("kphint");if(kh0)kh0.remove();if(d.length===12&&!editId){var ex=kpFind(o);if(ex){var s0=st(ex),kh=document.createElement("div");kh.id="kphint";kh.className="kph";var lab=this.closest("label");
+if(s0==="semasa"){kh.textContent="Perhatian: "+ex.nama+" masih dalam seliaan semasa. Rekod tidak boleh didaftar dua kali. Cari namanya dalam senarai dan kemas kini rekod itu."}
+else{var ep=(ex.hist||[]).map(function(x){var f=x.f||{};return (dmy(f.mula)||"-")+" hingga "+(dmy(f.tamat)||"-")+" ("+(HSTL[x.s]||"-")+")"});ep.push((dmy(ex.mula)||"-")+" hingga "+(dmy(ex.tamat)||"-")+" ("+(HSTL[s0]||"-")+(ex.bb&&ex.bb.t?" "+dmy(ex.bb.t):"")+")");
+kh.textContent="PERNAH DIPANTAU: "+ex.nama+". Pemantauan sebelum ini: "+ep.join("; ")+". Nama, No. SMPP, jantina, agama dan bangsa diisi semula. Kes, perintah, tarikh dan alamat perlu diisi baharu. Rekod lama disimpan sebagai sejarah selepas anda Simpan.";["nama","smpp","bangsa","agama","jantina"].forEach(function(k){if(el(k)&&!el(k).value&&ex[k])el(k).value=ex[k]})}
+lab.parentNode.insertBefore(kh,lab.nextSibling)}}});
 el("mula").addEventListener("change",calc);el("tamat").addEventListener("change",calc);
-$("pl").hidden=!r;$("pmsg").textContent="";clearP();if(r)drawPel(r);calc();$("qd").hidden=!r;$("qmsg").textContent="";clearQ();qsync();if(r)drawQ(r);$("bd").hidden=!r||C.key!=="obb";$("bmsg").textContent="";clearB();if(r&&C.key==="obb")drawB(r);$("bbk").hidden=!r;$("bbgo").hidden=!r;$("bbmsg").textContent="";if(r)drawBB(r);drawHist(r);$("kphint").textContent="";$("del").hidden=!r;$("rumeta").textContent=(r&&lastMod(r)>EPOCH)?"Dikemas kini terakhir: "+dmy(fmt(new Date(lastMod(r))))+" "+pad(new Date(lastMod(r)).getHours())+":"+pad(new Date(lastMod(r)).getMinutes()):"";$("dlg").showModal();
+$("pl").hidden=!r;$("pmsg").textContent="";clearP();if(r)drawPel(r);calc();$("qd").hidden=!r;$("qmsg").textContent="";clearQ();qsync();if(r)drawQ(r);$("bd").hidden=!r||C.key!=="obb";$("bmsg").textContent="";clearB();if(r&&C.key==="obb")drawB(r);$("bbk").hidden=!r;$("bbgo").hidden=!r;$("bbmsg").textContent="";if(r)drawBB(r);drawHist(r);$("del").hidden=!r;$("rumeta").textContent=(r&&lastMod(r)>EPOCH)?"Dikemas kini terakhir: "+dmy(fmt(new Date(lastMod(r))))+" "+pad(new Date(lastMod(r)).getHours())+":"+pad(new Date(lastMod(r)).getMinutes()):"";$("dlg").showModal();
 }
 
 $("f").addEventListener("submit",function(ev){
@@ -572,7 +576,7 @@ var CFG=(window.SLN_FB&&window.SLN_FB.apiKey&&window.SLN_FB.projectId)?window.SL
 try{RCM=JSON.parse(localStorage.getItem(RCK)||'{}')}catch(e){RCM={}}
 function saveRC(){try{localStorage.setItem(RCK,JSON.stringify(RCM))}catch(e){}}
 function kick(){if(!CFG||!AUTH)return;clearTimeout(kt);kt=setTimeout(function(){syncNow()},1500)}
-function setSyn(t){$('who').textContent=t+' (v3.1)'}
+function setSyn(t){$('who').textContent=t+' (v3.2)'}
 function fbBase(){return 'https://firestore.googleapis.com/v1/projects/'+CFG.projectId+'/databases/(default)/documents'}
 function loadAuth(){try{AUTH=JSON.parse(localStorage.getItem(AK)||'null')}catch(e){AUTH=null}}
 function saveAuth(){try{if(AUTH)localStorage.setItem(AK,JSON.stringify(AUTH));else localStorage.removeItem(AK)}catch(e){}}
@@ -757,7 +761,7 @@ $('tclose').addEventListener('click',function(){$('tdlg').close()});
 $('tlist').addEventListener('click',function(e){var b=e.target.closest('button[data-tr]');if(!b)return;var x=window.TRL[+b.dataset.tr];if(!x)return;x.r.del='';x.r.ru=NOW();saveAll();kick();rows=DB[C.key];drawTrash();render()});
 idleReset();
 if('serviceWorker' in navigator&&/^https?:/.test(location.protocol))navigator.serviceWorker.register('sw.js').catch(function(){});
-var APPV='3.1';function chkVer(){if(!/^https?:/.test(location.protocol)||navigator.onLine===false)return;fetch('index.html?v='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){var m=/\(v(\d+\.\d+)\)/.exec(t||'');if(m&&m[1]!==APPV&&parseFloat(m[1])>parseFloat(APPV))toast('Versi baharu (v'+m[1]+') tersedia.',function(){fetch('index.html?v='+Date.now(),{cache:'no-store'}).then(function(r){if(!r.ok)throw 0;var c1=r.clone(),c2=r.clone();return caches.open('seliaan-v3').then(function(c){return Promise.all([c.put('index.html',c1),c.put('./',c2)])})}).catch(function(){}).then(function(){location.reload()})},'Muat semula',30000)}).catch(function(){})}
+var APPV='3.2';function chkVer(){if(!/^https?:/.test(location.protocol)||navigator.onLine===false)return;fetch('index.html?v='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){var m=/\(v(\d+\.\d+)\)/.exec(t||'');if(m&&m[1]!==APPV&&parseFloat(m[1])>parseFloat(APPV))toast('Versi baharu (v'+m[1]+') tersedia.',function(){fetch('index.html?v='+Date.now(),{cache:'no-store'}).then(function(r){if(!r.ok)throw 0;var c1=r.clone(),c2=r.clone();return caches.open('seliaan-v3').then(function(c){return Promise.all([c.put('index.html',c1),c.put('./',c2)])})}).catch(function(){}).then(function(){location.reload()})},'Muat semula',30000)}).catch(function(){})}
 setTimeout(chkVer,4000);document.addEventListener('visibilitychange',function(){if(!document.hidden)setTimeout(chkVer,1500)});
 loadAuth();if(pinCfg())lockNow();gate();if(CFG&&AUTH)syncNow(true);
 </script>
