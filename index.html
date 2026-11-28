@@ -38,6 +38,16 @@ td.n,th.n{font-variant-numeric:tabular-nums;white-space:nowrap}
 .pill{display:inline-block;border-radius:99px;padding:1px 9px;font-size:.82rem;font-variant-numeric:tabular-nums}
 .p-ok{background:var(--bg);color:var(--ok)}.p-wn{background:var(--wnb);color:var(--wn)}.p-dg{background:var(--dgb);color:var(--dg)}
 .empty{padding:22px;color:var(--mu);text-align:center}
+.hd{display:flex;align-items:center;gap:12px;background:var(--ac);color:var(--acx);border-radius:14px;padding:10px 14px;margin:0 0 12px}.hd .ht{flex:1;text-align:center;line-height:1.25}.hd .ht b{display:block;font-size:1.12rem;letter-spacing:.2px}.hd .ht span{display:block;font-size:.8rem;opacity:.92;margin-top:2px}.hd .lgb{background:#fff;border-radius:10px;padding:4px;display:flex;flex:none;box-shadow:0 1px 3px rgba(0,0,0,.25)}.hd .lgb img{height:46px;width:auto;display:block}
+@media(max-width:520px){.hd{gap:8px;padding:8px 10px}.hd .lgb img{height:36px}.hd .ht b{font-size:.98rem}.hd .ht span{font-size:.7rem}}
+#dash{display:grid;gap:14px}.dh1{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:2px 10px}.dh1 h2{margin:0;font-size:1.1rem}.dh1 span{color:var(--mu);font-size:.88rem}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}.kpi{text-align:left;font:inherit;color:inherit;background:var(--card);border:1px solid var(--bd);border-left:5px solid var(--ac);border-radius:12px;padding:12px 14px;cursor:pointer;min-height:92px}.kpi:hover{background:var(--bg)}.kpi .v{display:block;font-size:2rem;font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums}.kpi .l{display:block;font-size:.74rem;color:var(--mu);text-transform:uppercase;letter-spacing:.05em;margin-top:3px}.kpi .s{display:block;font-size:.84rem;margin-top:5px;color:var(--mu)}.kpi.w{border-left-color:var(--wn)}.kpi.d{border-left-color:var(--dg)}.kpi.o{border-left-color:var(--ok)}
+.pn{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px 14px}.pn h3{margin:0 0 8px;font-size:.95rem}.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:10px}.offs{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:10px}
+.kv{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px dashed var(--bd);font-size:.92rem}.kv:last-child{border-bottom:0}.kv b{font-variant-numeric:tabular-nums;text-align:right}
+.bars .br{display:grid;grid-template-columns:90px 1fr 76px;gap:8px;align-items:center;font-size:.88rem;margin:6px 0}.bars .tr{background:var(--bg);border-radius:99px;height:10px;overflow:hidden}.bars .fl{display:block;height:100%;background:var(--ac);border-radius:99px;min-width:2px}.bars .br b{white-space:nowrap;text-align:right;font-variant-numeric:tabular-nums}.bars h4{margin:10px 0 2px;font-size:.82rem;color:var(--mu);font-weight:600}.bars h4:first-child{margin-top:0}
+.nr{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 4px;border-bottom:1px dashed var(--bd);cursor:pointer}.nr:last-child{border-bottom:0}.nr:hover{background:var(--bg)}.nr .nm{font-weight:600;min-width:0}.nr small{display:block;font-weight:400;color:var(--mu);font-size:.8rem}
+.qa{display:flex;flex-wrap:wrap;gap:8px}.al{display:flex;flex-direction:column;gap:6px}.al button{text-align:left;font:inherit;background:var(--wnb);color:var(--wn);border:0;border-radius:8px;padding:8px 12px;cursor:pointer}.al .ok{background:var(--bg);color:var(--ok);padding:8px 12px;border-radius:8px}
+
 dialog{border:1px solid var(--bd);border-radius:12px;background:var(--card);color:var(--tx);padding:0;width:min(720px,calc(100% - 20px));max-height:calc(100% - 20px)}
 dialog::backdrop{background:rgba(0,0,0,.45)}
 .dh{padding:14px 16px;border-bottom:1px solid var(--bd);font-weight:600}
@@ -85,10 +95,11 @@ tbody td.empty{display:block!important;grid-column:1/-1;background:var(--card);b
 <section id="cl" hidden><h2>Log masuk</h2><label>ID pengguna<input id="clu" autocomplete="username" autocapitalize="none"></label><label>Katakunci<input id="clp" type="password" autocomplete="current-password"></label><div class="err" id="cle" role="alert"></div><button class="pri" id="clb">Log masuk</button><p class="hint" style="margin:0">Selepas log masuk, data diselaraskan antara semua peranti anda.</p></section>
 <section id="lk" hidden><h2>Aplikasi dikunci</h2><label>Masukkan PIN<input id="lpin" type="password" inputmode="numeric" autocomplete="off" maxlength="8"></label><div class="err" id="lerr" role="alert"></div><button class="pri" id="lgo">Buka</button><button class="sec" id="lforgot">Lupa PIN</button></section>
 <div class="wrap" id="app">
-<h1>Sistem Seliaan ODP dan OBB</h1>
-<div class="ub"><span id="who">Data disimpan dalam peranti ini sahaja. (v3.9)</span><button class="sec" id="bsync" hidden>Selaras</button><button class="sec" id="bhelp">Bantuan</button><button class="sec" id="bdata">Data dan PIN</button><button class="sec" id="blout" hidden>Log keluar</button></div>
-<div class="tabs" id="main"><button class="on" data-m="odp">ODP</button><button data-m="obb">OBB</button></div>
-<section id="odp">
+<header class="hd"><span class="lgb"><img id="hl1" alt="Logo Jabatan Penjara"></span><div class="ht"><b>Sistem Seliaan ODP dan OBB</b><span>Pejabat Parol Daerah Bintulu / Stesen Parol Daerah Tatau</span></div><span class="lgb"><img id="hl2" alt="Logo Parol"></span></header>
+<div class="ub"><span id="who">Data disimpan dalam peranti ini sahaja. (v4.0)</span><button class="sec" id="bsync" hidden>Selaras</button><button class="sec" id="bhelp">Bantuan</button><button class="sec" id="bdata">Data dan PIN</button><button class="sec" id="blout" hidden>Log keluar</button></div>
+<div class="tabs" id="main"><button class="on" data-m="dash">Dashboard</button><button data-m="odp">ODP</button><button data-m="obb">OBB</button></div>
+<section id="dash" aria-live="polite"></section>
+<section id="odp" hidden>
 <div class="tabs sub" id="sub"><button class="on" data-s="semasa">Seliaan semasa <span id="c1"></span></button><button data-s="gantung">Digantung / dibatalkan <span id="c3"></span></button><button data-s="bebas">Telah dibebaskan <span id="c2"></span></button><button data-s="pindah">Berpindah <span id="c4"></span></button></div>
 <div class="bar">
 <input id="q" type="search" placeholder="Cari nama, No. KP atau No. SMPP" aria-label="Cari">
@@ -182,7 +193,8 @@ tbody td.empty{display:block!important;grid-column:1/-1;background:var(--card);b
 <div id="tst" popover="manual" role="status"><span id="tmsg"></span><button type="button" id="tundo">Batal</button></div>
 <dialog id="tdlg"><div class="dh">Rekod dipadam baru-baru ini</div><div class="dbody"><p class="hint" style="margin:0">Rekod yang dipadam boleh dipulihkan di sini. Selepas dipulihkan ia kembali ke senarai asal dan diselaraskan ke peranti lain.</p><div id="tlist"></div></div><div class="df"><button type="button" class="sec" id="tclose">Tutup</button></div></dialog>
 <dialog id="bdlg"><div class="dh">Bantuan ringkas</div><div class="dbody">
-<details open><summary>Tambah atau kemas kini rekod</summary><p class="hint">Tekan Tambah ODP / Tambah OBB, isi maklumat, Simpan. Tekan nama dalam senarai untuk kemas kini. Sistem mungkin meminta semakan (contohnya tarikh luar biasa); anda boleh memilih Simpan juga.</p></details>
+<details open><summary>Dashboard</summary><p class="hint">Skrin pertama menunjukkan jumlah seliaan, yang akan tamat, pelanggaran, pecahan mengikut pejabat, dan tindakan pantas. Ketik kad atau nama untuk terus ke senarai atau rekod itu.</p></details>
+<details><summary>Tambah atau kemas kini rekod</summary><p class="hint">Tekan Tambah ODP / Tambah OBB, isi maklumat, Simpan. Tekan nama dalam senarai untuk kemas kini. Sistem mungkin meminta semakan (contohnya tarikh luar biasa); anda boleh memilih Simpan juga.</p></details>
 <details><summary>Cari dan tapis</summary><p class="hint">Taip nama, No. KP atau No. SMPP. Pilih pejabat, daerah atau susunan. Ketik butang "Tamat dalam 7 / 14 / 30 hari" untuk lihat yang hampir tamat.</p></details>
 <details><summary>Pelanggaran, gantung dan batal</summary><p class="hint">Buka rekod, ke bahagian pelanggaran, isi dan Simpan. Apabila tarikh gantung atau batal diisi, nama berpindah ke senarai Digantung / dibatalkan. Salah isi? Tekan Padam pada entri itu, dan tekan Batal dalam 10 saat jika tersilap padam.</p></details>
 <details><summary>Pindah atau tukar alamat</summary><p class="hint">Dalam rekod, isi permohonan pindah. Apabila tarikh kuat kuasa diisi dan lokasi baharu bukan Bintulu / Tatau, nama masuk senarai Berpindah.</p></details>
@@ -245,7 +257,7 @@ function save(){DB[C.key]=rows;try{localStorage.setItem(C.sk,JSON.stringify(rows
 var tab="semasa",editId=null;
 var $=function(id){return document.getElementById(id)};
 
-function render(){drawYears();fillLok();
+function render(){if(dashOn)drawDash();drawYears();fillLok();
 var q=$("q").value.trim().toLowerCase(),off=$("off").value;
 drawSum();var hd=$("tb").parentNode.tHead.rows[0].cells,pd=tab==="pindah";hd[5].textContent=pd?"Lokasi baharu":"Pejabat";hd[6].textContent=pd?"Tarikh kuatkuasa":"Tarikh tamat";hd[7].textContent=pd?"Status":"Baki";var cnt={semasa:0,gantung:0,bebas:0,pindah:0};rows.forEach(function(r){if(inScope(r))cnt[st(r)]++});
 $("c1").textContent="("+cnt.semasa+")";$("c3").textContent="("+cnt.gantung+")";$("c2").textContent="("+cnt.bebas+")";$("c4").textContent="("+cnt.pindah+")";
@@ -337,6 +349,7 @@ document.querySelector(".dh2").textContent=C.pt;
 ["jenis","tarikh","tempat","nama","gantung","batal"].forEach(function(k){$("p"+k).parentNode.firstChild.nodeValue=C.pl[k]})}
 $("main").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;
 [].forEach.call($("main").children,function(x){x.classList.toggle("on",x===b)});
+if(b.dataset.m==="dash"){dashOn=true;$("dash").hidden=false;$("odp").hidden=true;drawDash();return}dashOn=false;$("dash").hidden=true;$("odp").hidden=false;
 UW=0;$('dae').value='';fillDae.s=null;C=MODS[b.dataset.m];F=C.F;rows=DB[C.key]||(DB[C.key]=load());tab="semasa";KT="";$("kat").value="";$("q").value="";$("xs").textContent="";skin();render()});
 var pe=null;
 
@@ -580,6 +593,49 @@ if(act==='print'){var pu=URL.createObjectURL(blob),pw=window.open(pu,'_blank');i
 var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fn;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},1500);s.textContent=(/^(Perkongsian|Pelayar)/.test(s.textContent)?s.textContent+' ':'')+'Fail sedia dimuat turun.'}
 function locRun(act){var s=$('xs');try{if(!(window.jspdf&&window.jspdf.jsPDF))throw 0;deliverPdf(mkLocPdf($('off').value),'jumlah-lokasi'+($('off').value?'':'-ikutpejabat')+'-'+today+'.pdf',act,s)}catch(e){s.textContent='Pustaka PDF tidak dapat dimuatkan. Semak sambungan internet.'}}
 $('xjml').addEventListener('click',function(){locRun('print')});
+
+var dashOn=true;
+function hdLogos(){var a=$('hl1'),b=$('hl2');if(a&&LG.l1&&a.getAttribute('src')!==LG.l1)a.src=LG.l1;if(b&&LG.l2&&b.getAttribute('src')!==LG.l2)b.src=LG.l2}
+function dashData(){var o={};['odp','obb'].forEach(function(k){o[k]=withMod(k,function(){var g={n:0,L:0,P:0,X:0,bi:0,ft:0,w7:0,w30:0,pv:0,tg:0,pp:0,bm:0,gan:0,pin:0,maj:0,kel:0,lain:0,off:{},nx:[]},mo=today.slice(0,7);
+(allData()[k]||[]).forEach(function(r){if(r.del)return;var s=st(r);
+if(s==='semasa'){g.n++;var sx=r.jantina==='Lelaki'?'L':r.jantina==='Perempuan'?'P':'X',ft=(k==='obb'&&r.kategori==='Fast Track');g[sx]++;if(k==='obb'){if(ft)g.ft++;else g.bi++}
+var ef=efTamat(r),b=days(today,ef),pvf=(r.pel||[]).length>0||(r.pbl||[]).some(function(q){return !q.kuat});if(b<=7)g.w7++;if(b<=30)g.w30++;if(pvf)g.pv++;if(tunda(r))g.tg++;if(pendPd(r))g.pp++;
+var j=alamatInfo(r).j;if(j==='Majikan')g.maj++;else if(j==='Keluarga')g.kel++;else g.lain++;
+var ok=(r.pejabat===P1||r.pejabat===P2)?r.pejabat:'lain',f=g.off[ok]=g.off[ok]||{n:0,L:0,P:0,bi:0,ft:0,pv:0};f.n++;if(sx==='L')f.L++;if(sx==='P')f.P++;if(k==='obb'){if(ft)f.ft++;else f.bi++}if(pvf)f.pv++;
+g.nx.push({k:k,id:r.id,nama:r.nama,b:b,d:ef,pej:r.pejabat})}
+else if(s==='bebas'){var d=(r.bb&&r.bb.t)?r.bb.t:efTamat(r);if(d&&d.slice(0,7)===mo)g.bm++}else if(s==='gantung')g.gan++;else if(s==='pindah')g.pin++});return g})});return o}
+function bar(l,v,t){var pc=t?Math.round(v*100/t):0;return '<div class="br"><span>'+l+'</span><span class="tr"><span class="fl" style="width:'+pc+'%"></span></span><b>'+v+' ('+pc+'%)</b></div>'}
+function drawDash(){var el0=$('dash');if(!el0)return;hdLogos();var d=dashData(),a=d.odp,b=d.obb,hr=['Ahad','Isnin','Selasa','Rabu','Khamis','Jumaat','Sabtu'][new Date(T(today)).getUTCDay()];
+var more=function(x,y){return x>=y?'odp':'obb'},nx=a.nx.concat(b.nx).sort(function(x,y){return x.b-y.b}).slice(0,8),w30=a.w30+b.w30,pv=a.pv+b.pv,tg=a.tg+b.tg,pp=a.pp+b.pp;
+var h='<div class="dh1"><h2>Ringkasan seliaan</h2><span>'+hr+', '+dmy(today)+'</span></div>';
+h+='<div class="kpis"><button class="kpi" data-go="odp:semasa"><span class="v">'+a.n+'</span><span class="l">ODP seliaan semasa</span><span class="s">Lelaki '+a.L+' | Perempuan '+a.P+(a.X?' | Tiada '+a.X:'')+'</span></button>'
++'<button class="kpi" data-go="obb:semasa"><span class="v">'+b.n+'</span><span class="l">OBB seliaan semasa</span><span class="s">Biasa '+b.bi+' | Fast Track '+b.ft+'</span></button>'
++'<button class="kpi w" data-go="'+more(a.w30,b.w30)+':tamat" title="Buka senarai yang tamat dalam 30 hari"><span class="v">'+w30+'</span><span class="l">Tamat dalam 30 hari</span><span class="s">ODP '+a.w30+' | OBB '+b.w30+((a.w7+b.w7)?' | dalam 7 hari: '+(a.w7+b.w7):'')+'</span></button>'
++'<button class="kpi '+(pv?'d':'o')+'" data-go="'+more(a.pv,b.pv)+':semasa"><span class="v">'+pv+'</span><span class="l">Pelanggaran belum diputuskan</span><span class="s">ODP '+a.pv+' | OBB '+b.pv+(tg?' | lebih 30 hari: '+tg:'')+'</span></button></div>';
+h+='<div class="kpis"><div class="pn"><span class="l" style="font-size:.74rem;color:var(--mu);text-transform:uppercase;letter-spacing:.05em">Bebas bulan ini</span><div class="kv"><span>ODP</span><b>'+a.bm+'</b></div><div class="kv"><span>OBB</span><b>'+b.bm+'</b></div></div>'
++'<div class="pn"><span class="l" style="font-size:.74rem;color:var(--mu);text-transform:uppercase;letter-spacing:.05em">Digantung / dibatalkan / panggil balik</span><div class="kv"><span>ODP</span><b>'+a.gan+'</b></div><div class="kv"><span>OBB</span><b>'+b.gan+'</b></div></div>'
++'<div class="pn"><span class="l" style="font-size:.74rem;color:var(--mu);text-transform:uppercase;letter-spacing:.05em">Berpindah</span><div class="kv"><span>ODP</span><b>'+a.pin+'</b></div><div class="kv"><span>OBB</span><b>'+b.pin+'</b></div></div></div>';
+h+='<div class="dh1"><h2>Mengikut pejabat penyelia</h2></div><div class="offs">';
+[[P1],[P2],['lain','Pejabat tidak dinyatakan']].forEach(function(x){var oa=a.off[x[0]]||{n:0,L:0,P:0,pv:0},ob=b.off[x[0]]||{n:0,bi:0,ft:0,L:0,P:0,pv:0};if(x[0]==='lain'&&!oa.n&&!ob.n)return;
+h+='<div class="pn"><h3>'+esc(x[1]||x[0])+'</h3><div class="kv"><span>ODP</span><b>'+oa.n+' ('+oa.L+' L / '+oa.P+' P)</b></div><div class="kv"><span>OBB</span><b>'+ob.n+' (Biasa '+ob.bi+' / FT '+ob.ft+')</b></div><div class="kv"><span>Jumlah diselia</span><b>'+(oa.n+ob.n)+'</b></div><div class="kv"><span>Pelanggaran belum diputuskan</span><b>'+(oa.pv+ob.pv)+'</b></div></div>'});
+h+='</div><div class="g2"><div class="pn nx"><h3>Akan tamat terdekat</h3>';
+h+=nx.length?nx.map(function(r){var cl=r.b<=7?'p-dg':r.b<=30?'p-wn':'p-ok';return '<div class="nr" data-rec="'+r.k+':'+r.id+'"><span class="nm">'+esc(r.nama)+'<small>'+r.k.toUpperCase()+' | tamat '+dmy(r.d)+'</small></span><span class="pill '+cl+'">'+(r.b<0?'Lepas':r.b===0?'Hari ini':r.b+' hari')+'</span></div>'}).join(''):'<p class="hint" style="margin:0">Tiada rekod seliaan semasa.</p>';
+h+='</div><div class="pn"><h3>Perlu perhatian</h3><div class="al">';var al=0,bd=backDays(),ad=function(t,g){al++;h+='<button type="button" data-go="'+g+'">'+t+'</button>'};
+if(tg)ad('Belum diputuskan lebih 30 hari: '+tg+' orang',more(a.tg,b.tg)+':semasa');if(pp)ad('Permohonan pindah belum diluluskan: '+pp+' orang',more(a.pp,b.pp)+':semasa');if(a.w7+b.w7)ad('Akan tamat dalam 7 hari: '+(a.w7+b.w7)+' orang',more(a.w7,b.w7)+':tamat7');
+if(bd===null||bd>=14)ad(bd===null?'Belum ada sandaran. Ketik untuk eksport.':'Sandaran terakhir '+bd+' hari lalu. Ketik untuk eksport.','back');if(!pinCfg())ad('PIN belum ditetapkan. Ketik untuk tetapkan.','back');
+if(!al)h+='<div class="ok">Tiada perkara yang perlu perhatian.</div>';h+='</div></div></div>';
+var bt=function(k,x){return x.L+x.P+x.X};
+h+='<div class="g2"><div class="pn bars"><h3>Jantina (seliaan semasa)</h3><h4>ODP</h4>'+bar('Lelaki',a.L,a.n)+bar('Perempuan',a.P,a.n)+'<h4>OBB</h4>'+bar('Lelaki',b.L,b.n)+bar('Perempuan',b.P,b.n)+'</div>'
++'<div class="pn bars"><h3>Lokasi (seliaan semasa)</h3><h4>ODP</h4>'+bar('Majikan',a.maj,a.n)+bar('Keluarga',a.kel,a.n)+'<h4>OBB</h4>'+bar('Majikan',b.maj,b.n)+bar('Keluarga',b.kel,b.n)+'<h4>Kategori OBB</h4>'+bar('Biasa',b.bi,b.n)+bar('Fast Track',b.ft,b.n)+'</div></div>';
+h+='<div class="dh1"><h2>Tindakan pantas</h2></div><div class="qa"><button class="pri" data-act="addodp">Tambah ODP</button><button class="pri" data-act="addobb">Tambah OBB</button><button class="sec" data-act="loc">Jumlah mengikut lokasi (PDF)</button><button class="sec" data-act="mon">Ringkasan bulanan (PDF)</button><button class="sec" data-act="data">Data dan PIN</button><button class="sec" data-act="help">Bantuan</button></div>';
+el0.innerHTML=h}
+function goTo(k,s,uw){var m=document.querySelector('#main [data-m="'+k+'"]');if(m)m.click();if(s&&s!=='semasa'){var sb=document.querySelector('#sub [data-s="'+s+'"]');if(sb)sb.click()}if(uw){UW=uw;render()}window.scrollTo(0,0)}
+$('dash').addEventListener('click',function(e){var t=e.target.closest('[data-go],[data-rec],[data-act]');if(!t)return;
+if(t.dataset.rec){var q=t.dataset.rec.split(':');goTo(q[0],'semasa');openForm(+q[1]);return}
+if(t.dataset.go){if(t.dataset.go==='back'){$('bdata').click();return}var g=t.dataset.go.split(':');if(g[1]==='tamat')goTo(g[0],'semasa',30);else if(g[1]==='tamat7')goTo(g[0],'semasa',7);else goTo(g[0],g[1]);return}
+var a=t.dataset.act;if(a==='addodp'){goTo('odp');$('add').click()}else if(a==='addobb'){goTo('obb');$('add').click()}else if(a==='loc'){locRun('print');setTimeout(function(){toast($('xs').textContent||'Menyediakan PDF...',null,'Tutup',6000)},700)}
+else if(a==='mon'){$('xsum').click();setTimeout(function(){toast($('xs').textContent,null,'Tutup',6000)},700)}else if(a==='data')$('bdata').click();else if(a==='help')$('bhelp').click()});
+hdLogos();drawDash();
 $('bhelp').addEventListener('click',function(){$('bdlg').showModal()});$('bhclose').addEventListener('click',function(){$('bdlg').close()});
 $('xxls').addEventListener('click',function(){out('xls')});$('xsh').addEventListener('click',function(){out('pdf','share')});$('xpr').addEventListener('click',function(){out('pdf','print')});
 skin();render();
@@ -630,7 +686,7 @@ var CFG=(window.SLN_FB&&window.SLN_FB.apiKey&&window.SLN_FB.projectId)?window.SL
 try{RCM=JSON.parse(localStorage.getItem(RCK)||'{}')}catch(e){RCM={}}
 function saveRC(){try{localStorage.setItem(RCK,JSON.stringify(RCM))}catch(e){}}
 function kick(){if(!CFG||!AUTH)return;clearTimeout(kt);kt=setTimeout(function(){syncNow()},1500)}
-function setSyn(t){$('who').textContent=t+' (v3.9)'}
+function setSyn(t){$('who').textContent=t+' (v4.0)'}
 function fbBase(){return 'https://firestore.googleapis.com/v1/projects/'+CFG.projectId+'/databases/(default)/documents'}
 function loadAuth(){try{AUTH=JSON.parse(localStorage.getItem(AK)||'null')}catch(e){AUTH=null}}
 function saveAuth(){try{if(AUTH)localStorage.setItem(AK,JSON.stringify(AUTH));else localStorage.removeItem(AK)}catch(e){}}
@@ -815,7 +871,7 @@ $('tclose').addEventListener('click',function(){$('tdlg').close()});
 $('tlist').addEventListener('click',function(e){var b=e.target.closest('button[data-tr]');if(!b)return;var x=window.TRL[+b.dataset.tr];if(!x)return;x.r.del='';x.r.ru=NOW();saveAll();kick();rows=DB[C.key];drawTrash();render()});
 idleReset();
 if('serviceWorker' in navigator&&/^https?:/.test(location.protocol))navigator.serviceWorker.register('sw.js').catch(function(){});
-var APPV='3.9';function chkVer(){if(!/^https?:/.test(location.protocol)||navigator.onLine===false)return;fetch('index.html?v='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){var m=/\(v(\d+\.\d+)\)/.exec(t||'');if(m&&m[1]!==APPV&&parseFloat(m[1])>parseFloat(APPV))toast('Versi baharu (v'+m[1]+') tersedia.',function(){fetch('index.html?v='+Date.now(),{cache:'no-store'}).then(function(r){if(!r.ok)throw 0;var c1=r.clone(),c2=r.clone();return caches.open('seliaan-v3').then(function(c){return Promise.all([c.put('index.html',c1),c.put('./',c2)])})}).catch(function(){}).then(function(){location.reload()})},'Muat semula',30000)}).catch(function(){})}
+var APPV='4.0';function chkVer(){if(!/^https?:/.test(location.protocol)||navigator.onLine===false)return;fetch('index.html?v='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){var m=/\(v(\d+\.\d+)\)/.exec(t||'');if(m&&m[1]!==APPV&&parseFloat(m[1])>parseFloat(APPV))toast('Versi baharu (v'+m[1]+') tersedia.',function(){fetch('index.html?v='+Date.now(),{cache:'no-store'}).then(function(r){if(!r.ok)throw 0;var c1=r.clone(),c2=r.clone();return caches.open('seliaan-v3').then(function(c){return Promise.all([c.put('index.html',c1),c.put('./',c2)])})}).catch(function(){}).then(function(){location.reload()})},'Muat semula',30000)}).catch(function(){})}
 setTimeout(chkVer,4000);document.addEventListener('visibilitychange',function(){if(!document.hidden)setTimeout(chkVer,1500)});
 loadAuth();if(pinCfg())lockNow();gate();if(CFG&&AUTH)syncNow(true);
 </script>
