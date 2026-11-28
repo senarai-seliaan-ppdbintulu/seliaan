@@ -108,7 +108,7 @@ tbody td.empty{display:block!important;grid-column:1/-1;background:var(--card);b
 <section id="lk" hidden><h2>Aplikasi dikunci</h2><label>Masukkan PIN<input id="lpin" type="password" inputmode="numeric" autocomplete="off" maxlength="8"></label><div class="err" id="lerr" role="alert"></div><button class="pri" id="lgo">Buka</button><button class="sec" id="lforgot">Lupa PIN</button></section>
 <div class="wrap" id="app">
 <header class="hd"><span class="lgb"><img id="hl1" alt="Logo Jabatan Penjara"></span><div class="ht"><b>Sistem Seliaan ODP dan OBB</b><span>Pejabat Parol Daerah Bintulu / Stesen Parol Daerah Tatau</span></div><span class="lgb"><img id="hl2" alt="Logo Parol"></span></header>
-<div class="ub"><span id="who">Data disimpan dalam peranti ini sahaja. (v4.2)</span><button class="sec" id="bsync" hidden>Selaras</button><button class="sec" id="bhelp">Bantuan</button><button class="sec" id="bdata">Data dan PIN</button><button class="sec" id="blout" hidden>Log keluar</button></div>
+<div class="ub"><span id="who">Data disimpan dalam peranti ini sahaja. (v4.3)</span><button class="sec" id="bsync" hidden>Selaras</button><button class="sec" id="bhelp">Bantuan</button><button class="sec" id="bdata">Data dan PIN</button><button class="sec" id="blout" hidden>Log keluar</button></div>
 <div class="tabs" id="main"><button class="on" data-m="dash">Dashboard</button><button data-m="odp">ODP</button><button data-m="obb">OBB</button></div>
 <section id="dash" aria-live="polite"></section>
 <section id="odp" hidden>
@@ -607,7 +607,7 @@ var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fn
 function locRun(act){var s=$('xs');try{if(!(window.jspdf&&window.jspdf.jsPDF))throw 0;deliverPdf(mkLocPdf($('off').value),'jumlah-lokasi'+($('off').value?'':'-ikutpejabat')+'-'+today+'.pdf',act,s)}catch(e){s.textContent='Pustaka PDF tidak dapat dimuatkan. Semak sambungan internet.'}}
 $('xjml').addEventListener('click',function(){locRun('print')});
 
-var dashOn=true,DO=lsGet('seliaan-dash-off')||'';if(DO!==P1&&DO!==P2)DO='';
+var dashOn=true,DO='';
 var MN=['Jan','Feb','Mac','Apr','Mei','Jun','Jul','Ogo','Sep','Okt','Nov','Dis'];
 function ymAdd(ym,n){var y=+ym.slice(0,4),m=+ym.slice(5,7)-1+n;y+=Math.floor(m/12);m=((m%12)+12)%12;return y+'-'+('0'+(m+1)).slice(-2)}
 function mLabel(ym){return MN[+ym.slice(5,7)-1]+' '+ym.slice(2,4)}
@@ -682,11 +682,11 @@ doc.setFont('helvetica','normal');doc.setFontSize(7);var pg=doc.getNumberOfPages
 return doc.output('blob')}
 function dashPdf(act){var s=$('xs');try{if(!(window.jspdf&&window.jspdf.jsPDF))throw 0;s.textContent='Menyediakan PDF...';deliverPdf(mkDashPdf(DO),'dashboard'+(DO?(DO===P1?'-bintulu':'-tatau'):'')+'-'+today+'.pdf',act,s)}catch(e){s.textContent='PDF belum sedia. Buka sistem dengan internet sekali supaya pustaka PDF dimuat.'}setTimeout(function(){toast(s.textContent,null,'Tutup',6000)},900)}
 $('dash').addEventListener('click',function(e){var t=e.target.closest('[data-go],[data-rec],[data-act],[data-off]');if(!t)return;
-if(t.dataset.off!==undefined){DO=t.dataset.off;lsSet('seliaan-dash-off',DO);drawDash();return}
+if(t.dataset.off!==undefined){DO=t.dataset.off;drawDash();return}
 if(t.dataset.rec){var q=t.dataset.rec.split(':');goTo(q[0],'semasa');openForm(+q[1]);return}
 if(t.dataset.go){var go=t.dataset.go;if(go==='back'){$('bdata').click();return}if(go.slice(0,3)==='pv:'){pvOpen(go==='pv:tg');return}var g=go.split(':');if(g[1]==='tamat')goTo(g[0],'semasa',30);else if(g[1]==='tamat7')goTo(g[0],'semasa',7);else if(g[1]==='tamat14')goTo(g[0],'semasa',14);else goTo(g[0],g[1]);return}
-var a=t.dataset.act;if(a==='addodp'){goTo('odp');$('add').click()}else if(a==='addobb'){goTo('obb');$('add').click()}else if(a==='loc'){locRun('print');setTimeout(function(){toast($('xs').textContent||'Menyediakan PDF...',null,'Tutup',6000)},700)}
-else if(a==='mon'){$('xsum').click();setTimeout(function(){toast($('xs').textContent,null,'Tutup',6000)},700)}else if(a==='dpdf')dashPdf('print');else if(a==='ddl')dashPdf('download');else if(a==='data')$('bdata').click();else if(a==='help')$('bhelp').click()});
+var a=t.dataset.act;if(a==='addodp'){goTo('odp');$('add').click()}else if(a==='addobb'){goTo('obb');$('add').click()}else if(a==='loc'){if($('off'))$('off').value=DO;locRun('print');setTimeout(function(){toast($('xs').textContent||'Menyediakan PDF...',null,'Tutup',6000)},700)}
+else if(a==='mon'){if($('off'))$('off').value=DO;$('xsum').click();setTimeout(function(){toast($('xs').textContent,null,'Tutup',6000)},700)}else if(a==='dpdf')dashPdf('print');else if(a==='ddl')dashPdf('download');else if(a==='data')$('bdata').click();else if(a==='help')$('bhelp').click()});
 $('pvl').addEventListener('click',function(e){var t=e.target.closest('[data-rec]');if(!t)return;var q=t.dataset.rec.split(':');$('pvdlg').close();goTo(q[0],'semasa');openForm(+q[1])});
 $('pvc').addEventListener('click',function(){$('pvdlg').close()});
 hdLogos();drawDash();
@@ -740,7 +740,7 @@ var CFG=(window.SLN_FB&&window.SLN_FB.apiKey&&window.SLN_FB.projectId)?window.SL
 try{RCM=JSON.parse(localStorage.getItem(RCK)||'{}')}catch(e){RCM={}}
 function saveRC(){try{localStorage.setItem(RCK,JSON.stringify(RCM))}catch(e){}}
 function kick(){if(!CFG||!AUTH)return;clearTimeout(kt);kt=setTimeout(function(){syncNow()},1500)}
-function setSyn(t){$('who').textContent=t+' (v4.2)'}
+function setSyn(t){$('who').textContent=t+' (v4.3)'}
 function fbBase(){return 'https://firestore.googleapis.com/v1/projects/'+CFG.projectId+'/databases/(default)/documents'}
 function loadAuth(){try{AUTH=JSON.parse(localStorage.getItem(AK)||'null')}catch(e){AUTH=null}}
 function saveAuth(){try{if(AUTH)localStorage.setItem(AK,JSON.stringify(AUTH));else localStorage.removeItem(AK)}catch(e){}}
@@ -925,7 +925,7 @@ $('tclose').addEventListener('click',function(){$('tdlg').close()});
 $('tlist').addEventListener('click',function(e){var b=e.target.closest('button[data-tr]');if(!b)return;var x=window.TRL[+b.dataset.tr];if(!x)return;x.r.del='';x.r.ru=NOW();saveAll();kick();rows=DB[C.key];drawTrash();render()});
 idleReset();
 if('serviceWorker' in navigator&&/^https?:/.test(location.protocol))navigator.serviceWorker.register('sw.js').catch(function(){});
-var APPV='4.2';function chkVer(){if(!/^https?:/.test(location.protocol)||navigator.onLine===false)return;fetch('index.html?v='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){var m=/\(v(\d+\.\d+)\)/.exec(t||'');if(m&&m[1]!==APPV&&parseFloat(m[1])>parseFloat(APPV))toast('Versi baharu (v'+m[1]+') tersedia.',function(){fetch('index.html?v='+Date.now(),{cache:'no-store'}).then(function(r){if(!r.ok)throw 0;var c1=r.clone(),c2=r.clone();return caches.open('seliaan-v3').then(function(c){return Promise.all([c.put('index.html',c1),c.put('./',c2)])})}).catch(function(){}).then(function(){location.reload()})},'Muat semula',30000)}).catch(function(){})}
+var APPV='4.3';function chkVer(){if(!/^https?:/.test(location.protocol)||navigator.onLine===false)return;fetch('index.html?v='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){var m=/\(v(\d+\.\d+)\)/.exec(t||'');if(m&&m[1]!==APPV&&parseFloat(m[1])>parseFloat(APPV))toast('Versi baharu (v'+m[1]+') tersedia.',function(){fetch('index.html?v='+Date.now(),{cache:'no-store'}).then(function(r){if(!r.ok)throw 0;var c1=r.clone(),c2=r.clone();return caches.open('seliaan-v3').then(function(c){return Promise.all([c.put('index.html',c1),c.put('./',c2)])})}).catch(function(){}).then(function(){location.reload()})},'Muat semula',30000)}).catch(function(){})}
 setTimeout(chkVer,4000);document.addEventListener('visibilitychange',function(){if(!document.hidden)setTimeout(chkVer,1500)});
 loadAuth();if(pinCfg())lockNow();gate();if(CFG&&AUTH)syncNow(true);
 </script>
